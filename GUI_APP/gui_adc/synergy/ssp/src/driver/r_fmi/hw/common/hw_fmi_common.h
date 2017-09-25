@@ -1,0 +1,77 @@
+/***********************************************************************************************************************
+ * Copyright [2015] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+ * 
+ * This file is part of Renesas SynergyTM Software Package (SSP)
+ *
+ * The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
+ * and/or its licensors ("Renesas") and subject to statutory and contractual protections.
+ *
+ * This file is subject to a Renesas SSP license agreement. Unless otherwise agreed in an SSP license agreement with
+ * Renesas: 1) you may not use, copy, modify, distribute, display, or perform the contents; 2) you may not use any name
+ * or mark of Renesas for advertising or publicity purposes or in connection with your use of the contents; 3) RENESAS
+ * MAKES NO WARRANTY OR REPRESENTATIONS ABOUT THE SUITABILITY OF THE CONTENTS FOR ANY PURPOSE; THE CONTENTS ARE PROVIDED
+ * "AS IS" WITHOUT ANY EXPRESS OR IMPLIED WARRANTY, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE, AND NON-INFRINGEMENT; AND 4) RENESAS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, OR
+ * CONSEQUENTIAL DAMAGES, INCLUDING DAMAGES RESULTING FROM LOSS OF USE, DATA, OR PROJECTS, WHETHER IN AN ACTION OF
+ * CONTRACT OR TORT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE CONTENTS. Third-party contents
+ * included in this file may be subject to different terms.
+ **********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ * File Name    : hw_fmi_common.h
+ * Description  : FMI
+ **********************************************************************************************************************/
+
+
+/*******************************************************************************************************************//**
+
+ **********************************************************************************************************************/
+
+#ifndef HW_FMI_COMMON_H
+#define HW_FMI_COMMON_H
+
+/**********************************************************************************************************************
+ * Includes
+ **********************************************************************************************************************/
+#include "bsp_api.h"
+
+/***********************************************************************************************************************
+ * Macro definitions
+ **********************************************************************************************************************/
+#define R_FMI_BASE	0x407FB19CUL
+#define R_FMIFRT	((uint32_t *)R_FMI_BASE)
+/***********************************************************************************************************************
+ * Typedef definitions
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ * Private function prototypes
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ * Private global variables
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ * Private Functions
+ **********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @brief      This function locks FMI registers
+ * @retval     Void pointer to FMI record indexed by record type.
+ **********************************************************************************************************************/
+
+__STATIC_INLINE uint32_t HW_FMI_RecordLocate(fmi_types_t type)
+{
+	fmi_table_t * p_table;
+	uint32_t	  offset;
+	uint32_t	  record_address;
+
+	p_table = (fmi_table_t *)*R_FMIFRT;
+	offset = p_table->offset[type];
+	record_address = (uint32_t)*R_FMIFRT;
+	record_address += offset * sizeof(uint32_t);
+	return(record_address);
+}
+
+#endif /* HW_FMI_COMMON_H */

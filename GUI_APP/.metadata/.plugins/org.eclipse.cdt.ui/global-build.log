@@ -1,0 +1,8 @@
+12:45:34 **** Incremental Build of configuration Debug for project GUIAppButton ****
+make -j4 all 
+'Invoking: Cross ARM GNU Print Size'
+arm-none-eabi-size --format=berkeley "GUIAppButton.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 397276	   1832	 475984	 875092	  d5a54	GUIAppButton.elf
+'Finished building: GUIAppButton.siz'
+' '

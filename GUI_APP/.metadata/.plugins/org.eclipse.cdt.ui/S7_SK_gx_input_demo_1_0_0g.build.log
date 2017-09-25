@@ -1,0 +1,11 @@
+16:15:19 **** Incremental Build of configuration Debug for project S7_SK_gx_input_demo_1_0_0g ****
+make -j4 all 
+'Invoking: Cross ARM GNU Print Size'
+arm-none-eabi-size --format=berkeley "S7_SK_gx_input_demo_1_0_0g.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 315732	   1616	 453512	 770860	  bc32c	S7_SK_gx_input_demo_1_0_0g.elf
+'Finished building: S7_SK_gx_input_demo_1_0_0g.siz'
+' '
+
+16:15:24 Build Finished. 0 errors, 0 warnings. (took 5s.46ms)
+

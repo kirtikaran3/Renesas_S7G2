@@ -1,0 +1,138 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_audio_playback" path="ssp_cfg/framework/sf_audio_playback_cfg.h" version="0">
+        <property default="config.framework.sf_audio_playback.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_audio_playback.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_audio_playback.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_audio_playback.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="512" display="Buffer Size Bytes" id="config.framework.sf_audio_playback.buffer_size_bytes">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_audio_playback.buffer_size_bytes}")  &amp;&amp; ("${config.framework.sf_audio_playback.buffer_size_bytes}" &gt;= 0)</constraint>
+        </property>
+        <property default="1" display="Maximum Number of Streams" id="config.framework.sf_audio_playback.max_streams">
+            <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_audio_playback.max_streams}")  &amp;&amp; ("${config.framework.sf_audio_playback.max_streams}" &gt;= 0)</constraint>
+        </property>
+        <content>#define SF_AUDIO_PLAYBACK_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_audio_playback.param_checking_enable}
+#define SF_AUDIO_PLAYBACK_CFG_BUFFER_SIZE_BYTES ${config.framework.sf_audio_playback.buffer_size_bytes}
+#define SF_AUDIO_PLAYBACK_CFG_MAX_STREAMS ${config.framework.sf_audio_playback.max_streams}
+</content>
+    </config>
+    <module config="config.framework.sf_audio_playback_common" display="Framework|Audio|${module.framework.sf_audio_playback_common.name} Audio Playback Framework Shared on sf_audio_playback" id="module.framework.sf_audio_playback_common_on_sf_audio_playback" version="1">
+        <constraint display="Requires one Audio Playback Hardware (Common) module named ${module.framework.sf_audio_playback_common.lowerlevelname}">
+            "${interface.framework.sf_audio_playback_hw.${module.framework.sf_audio_playback_common.lowerlevelname}}" === "1"
+        </constraint>
+        <constraint display="Requires one Messaging Framework (Common) instance named ${module.framework.sf_audio_playback_common.messagename}">
+            "${interface.framework.sf_message.${module.framework.sf_audio_playback_common.messagename}}" === "1"
+        </constraint>
+        <requires interface="_hal" />
+         <provides interface="interface.framework.sf_audio_playback_common.${module.framework.sf_audio_playback_common.name}" />
+       <property default="g_sf_audio_playback_common" display="Name" id="module.framework.sf_audio_playback_common.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback_common.name}")</constraint>
+        </property>
+        <property default="3" display="Thread Priority" id="module.framework.sf_audio_playback_common.priority">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.framework.sf_audio_playback_common.priority}")  &amp;&amp; ("${module.framework.sf_audio_playback_common.priority}" &gt;= 0)</constraint>
+           </property>
+        <property id="module.framework.sf_audio_playback_common.messagename" display="Messaging Framework Name" default="g_sf_message">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback_common.messagename}")</constraint>
+        </property>
+        <property id="module.framework.sf_audio_playback_common.queuename" display="Audio Message Queue Name" default="g_sf_audio_playback_queue">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback_common.queuename}")</constraint>
+        </property>
+        <property id="module.framework.sf_audio_playback_common.lowerlevelname" display="Lower Level Name" default="g_sf_audio_playback_hw">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback_common.lowerlevelname}")</constraint>
+        </property>
+        <includes>#include &quot;sf_audio_playback.h&quot;</includes>
+        <declarations>
+extern TX_QUEUE ${module.framework.sf_audio_playback_common.queuename};
+extern const sf_message_instance_t ${module.framework.sf_audio_playback_common.messagename};
+sf_audio_playback_common_ctrl_t ${module.framework.sf_audio_playback_common.name};
+const sf_audio_playback_common_cfg_t ${module.framework.sf_audio_playback_common.name}_cfg =
+{
+    .p_lower_lvl_hw      = &amp;${module.framework.sf_audio_playback_common.lowerlevelname},
+    .priority            = ${module.framework.sf_audio_playback_common.priority},
+    .p_message           = &amp;${module.framework.sf_audio_playback_common.messagename},
+    .p_queue             = &amp;${module.framework.sf_audio_playback_common.queuename},
+};
+</declarations>
+    </module>
+    <module config="config.framework.sf_audio_playback" display="Framework|Audio|${module.framework.sf_audio_playback.name} Audio Playback Framework on sf_audio_playback" id="module.framework.sf_audio_playback_on_sf_audio_playback" version="1">
+        <constraint display="Requires one Audio Playback Framework Shared (Common) module named ${module.framework.sf_audio_playback.commonname}">
+            "${interface.framework.sf_audio_playback_common.${module.framework.sf_audio_playback.commonname}}" === "1"
+        </constraint>
+        <property default="g_sf_audio_playback" display="Name" id="module.framework.sf_audio_playback.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback.name}")</constraint>
+        </property>
+        <property default="0" display="Message Class Instance" id="module.framework.sf_audio_playback.classinstance">
+            <constraint display="Value must be an integer between 0 and 255">testInteger("${module.framework.sf_audio_playback.classinstance}")  &amp;&amp; ("${module.framework.sf_audio_playback.classinstance}" &gt;= 0)  &amp;&amp; ("${module.framework.sf_audio_playback.classinstance}" &lt;= 255)</constraint>
+           </property>
+        <property id="module.framework.sf_audio_playback.commonname" display="Common Audio Data Name" default="g_sf_audio_playback_common">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback.commonname}")</constraint>
+        </property>
+        <property default="NULL" display="Callback" id="module.framework.sf_audio_playback.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_audio_playback.p_callback}")</constraint>
+        </property>
+        <header>
+            extern sf_audio_playback_common_ctrl_t ${module.framework.sf_audio_playback.commonname};
+            extern const sf_audio_playback_common_cfg_t ${module.framework.sf_audio_playback.commonname}_cfg;
+            extern const sf_audio_playback_instance_t ${module.framework.sf_audio_playback.name};
+		    /** Pointer to Audio Playback API */
+            extern const sf_audio_playback_api_t * ${module.framework.sf_audio_playback.name}_api;
+#ifdef ${module.framework.sf_audio_playback.p_callback}
+#define SF_AUDIO_PLAYBACK_ON_SF_AUDIO_PLAYBACK_CALLBACK_USED_${module.framework.sf_audio_playback.name} (0)
+#else
+#define SF_AUDIO_PLAYBACK_ON_SF_AUDIO_PLAYBACK_CALLBACK_USED_${module.framework.sf_audio_playback.name} (1)
+#endif
+#if SF_AUDIO_PLAYBACK_ON_SF_AUDIO_PLAYBACK_CALLBACK_USED_${module.framework.sf_audio_playback.name}
+void ${module.framework.sf_audio_playback.p_callback}(sf_message_callback_args_t * p_args);
+#endif
+        </header>
+        <includes>#include &quot;sf_audio_playback.h&quot;</includes>
+        <declarations>
+#if SF_AUDIO_PLAYBACK_ON_SF_AUDIO_PLAYBACK_CALLBACK_USED_${module.framework.sf_audio_playback.name}
+#if defined(__ICCARM__)
+#define ${module.framework.sf_audio_playback.p_callback}_WEAK_ATTRIBUTE
+#pragma weak ${module.framework.sf_audio_playback.p_callback}                            = ${module.framework.sf_audio_playback.p_callback}_internal
+#elif defined(__GNUC__)
+#define ${module.framework.sf_audio_playback.p_callback}_WEAK_ATTRIBUTE       __attribute__ ((weak, alias("${module.framework.sf_audio_playback.p_callback}_internal")))
+#endif
+void ${module.framework.sf_audio_playback.p_callback}(sf_message_callback_args_t * p_args) ${module.framework.sf_audio_playback.p_callback}_WEAK_ATTRIBUTE;
+#endif
+sf_audio_playback_ctrl_t ${module.framework.sf_audio_playback.name}_ctrl;
+const sf_audio_playback_cfg_t ${module.framework.sf_audio_playback.name}_cfg =
+{
+    .p_common_cfg = &amp;${module.framework.sf_audio_playback.commonname}_cfg,
+    .p_common_ctrl = &amp;${module.framework.sf_audio_playback.commonname},
+    .class_instance = ${module.framework.sf_audio_playback.classinstance},
+    .p_callback          = ${module.framework.sf_audio_playback.p_callback},
+};
+const sf_audio_playback_instance_t ${module.framework.sf_audio_playback.name} = 
+{
+    .p_api = &amp;g_sf_audio_playback_on_sf_audio_playback,
+	.p_ctrl = &amp;${module.framework.sf_audio_playback.name}_ctrl,
+	.p_cfg = &amp;${module.framework.sf_audio_playback.name}_cfg,
+};
+
+#if SF_AUDIO_PLAYBACK_ON_SF_AUDIO_PLAYBACK_CALLBACK_USED_${module.framework.sf_audio_playback.name}
+/*******************************************************************************************************************//**
+ * @brief      This is a weak example callback function.  It should be overridden by defining a user callback function 
+ *             with the prototype below.
+ *               - void ${module.framework.sf_audio_playback.p_callback}(sf_message_callback_args_t * p_args)
+ *
+ * @param[in]  p_args  Callback arguments used to identify what caused the callback.
+ **********************************************************************************************************************/
+void ${module.framework.sf_audio_playback.p_callback}_internal(sf_message_callback_args_t * p_args)
+{
+	/** Do nothing. */
+}
+#endif
+</declarations>
+        <init>
+            ssp_err_t ssp_err_${module.framework.sf_audio_playback.name};
+            ssp_err_${module.framework.sf_audio_playback.name} = ${module.framework.sf_audio_playback.name}.p_api->open(${module.framework.sf_audio_playback.name}.p_ctrl, ${module.framework.sf_audio_playback.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_audio_playback.name})
+            {
+                while (1);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

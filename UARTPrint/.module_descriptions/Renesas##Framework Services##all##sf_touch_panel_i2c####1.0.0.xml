@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <config id="config.framework.sf_touch_panel_i2c" path="ssp_cfg/framework/sf_touch_panel_i2c_cfg.h" version="0">
+        <property default="config.framework.sf_touch_panel_i2c.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_touch_panel_i2c.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_touch_panel_i2c.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_touch_panel_i2c.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_touch_panel_i2c.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>#define SF_TOUCH_PANEL_I2C_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_touch_panel_i2c.param_checking_enable}
+</content>
+    </config>
+    <module config="config.framework.sf_touch_panel_i2c" display="Framework|Input|${module.framework.sf_touch_panel.name} Touch Panel Framework on sf_touch_panel_i2c" id="module.framework.sf_touch_panel_on_sf_touch_panel_i2c" version="1">
+        <constraint display="Requires one External IRQ Framework instance named ${module.framework.sf_touch_panel.lowerlevelsfexternalirqname}">
+            "${interface.framework.sf_external_irq.${module.framework.sf_touch_panel.lowerlevelsfexternalirqname}}" === "1"
+        </constraint>
+        <constraint display="Requires one Messaging Framework (Common) instance named ${module.framework.sf_touch_panel.messagename}">
+            "${interface.framework.sf_message.${module.framework.sf_touch_panel.messagename}}" === "1"
+        </constraint>
+        <constraint display="Requires one I2C Driver instance named ${module.framework.sf_touch_panel.lowerleveli2cname}">
+            "${interface.driver.i2c.${module.framework.sf_touch_panel.lowerleveli2cname}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <property default="g_sf_touch_panel_i2c" display="Name" id="module.framework.sf_touch_panel.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_panel.name}")</constraint>
+        </property>
+        <property id="module.framework.sf_touch_panel.chip" display="Touch Chip" default="g_sf_touch_panel_i2c_chip_ft5x06">
+            <constraint display="Must be a valid C symbol, NULL is not allowed. g_sf_touch_panel_i2c_chip_ft5x06/sx8654 are bundled in SSP.">testSymbol("${module.framework.sf_touch_panel.chip}")</constraint>
+        </property>
+        <property id="module.framework.sf_touch_panel.messagename" display="Messaging Framework Name" default="g_sf_message">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_panel.messagename}")</constraint>
+        </property>
+        <property default="3" display="Thread Priority" id="module.framework.sf_touch_panel.priority">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.framework.sf_touch_panel.priority}")  &amp;&amp; ("${module.framework.sf_touch_panel.priority}" &gt;= 0)</constraint>
+           </property>
+        <property default="800" display="Hsize Pixels" id="module.framework.sf_touch_panel.hsize_pixels">
+            <constraint display="Value must be an integer greater than 0">testInteger("${module.framework.sf_touch_panel.hsize_pixels}")  &amp;&amp; ("${module.framework.sf_touch_panel.hsize_pixels}" &gt; 0)</constraint>
+           </property>
+        <property default="480" display="Vsize Pixels" id="module.framework.sf_touch_panel.vsize_pixels">
+            <constraint display="Value must be an integer greater than 0">testInteger("${module.framework.sf_touch_panel.vsize_pixels}")  &amp;&amp; ("${module.framework.sf_touch_panel.vsize_pixels}" &gt; 0)</constraint>
+           </property>
+        <property default="10" display="Update Hz" id="module.framework.sf_touch_panel.update_hz">
+            <constraint display="Value must be an integer greater than 0">testInteger("${module.framework.sf_touch_panel.update_hz}")  &amp;&amp; ("${module.framework.sf_touch_panel.update_hz}" &gt; 0)</constraint>
+           </property>
+        <property default="IOPORT_PORT_10_PIN_02" display="Reset Pin" id="module.framework.sf_touch_panel.pin">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_panel.pin}")</constraint>
+           </property>
+        <property id="module.framework.sf_touch_panel.lowerleveli2capi" display="Lower Level I2C API" default="module.framework.sf_touch_panel.lowerleveli2capi.riic">
+            <option display="RIIC" id="module.framework.sf_touch_panel.lowerleveli2capi.riic" value="riic"/>
+            <option display="SCI" id="module.framework.sf_touch_panel.lowerleveli2capi.sci" value="sci"/>
+        </property>
+        <property id="module.framework.sf_touch_panel.lowerleveli2cname" display="Lower Level I2C Name" default="g_i2c">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_panel.lowerleveli2cname}")</constraint>
+        </property>
+        <property id="module.framework.sf_touch_panel.lowerlevelsfexternalirqapi" display="Lower Level External IRQ Framework API" default="module.framework.sf_touch_panel.lowerlevelsfexternalirqapi.sfexternalirq">
+            <option display="SF_EXTERNAL_IRQ" id="module.framework.sf_touch_panel.lowerlevelsfexternalirqapi.sfexternalirq" value="sf_external_irq"/>
+        </property>
+        <property id="module.framework.sf_touch_panel.lowerlevelsfexternalirqname" display="Lower Level External IRQ Framework Name" default="g_sf_external_irq">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_panel.lowerlevelsfexternalirqname}")</constraint>
+        </property>
+        <header>
+            /* SF Touch Panel on SF Touch Panel I2C Instance. */
+            extern const sf_touch_panel_instance_t ${module.framework.sf_touch_panel.name};
+        </header>
+        <includes>#include &quot;sf_touch_panel_i2c.h&quot;
+#include &quot;sf_touch_panel_api.h&quot;</includes>
+        <declarations>static sf_touch_panel_i2c_ctrl_t ${module.framework.sf_touch_panel.name}_extend;
+sf_touch_panel_ctrl_t ${module.framework.sf_touch_panel.name}_ctrl;
+const sf_touch_panel_i2c_cfg_t ${module.framework.sf_touch_panel.name}_cfg_extend =
+{
+    .p_lower_lvl_i2c = &amp;${module.framework.sf_touch_panel.lowerleveli2cname},
+    .p_lower_lvl_ctrl = &amp;${module.framework.sf_touch_panel.name}_extend,
+    .p_lower_lvl_irq = &amp;${module.framework.sf_touch_panel.lowerlevelsfexternalirqname},
+    .pin = ${module.framework.sf_touch_panel.pin},
+    .p_chip = &amp;${module.framework.sf_touch_panel.chip},
+};
+extern const sf_message_instance_t ${module.framework.sf_touch_panel.messagename};
+const sf_touch_panel_cfg_t ${module.framework.sf_touch_panel.name}_cfg =
+{
+    .hsize_pixels        = ${module.framework.sf_touch_panel.hsize_pixels},
+    .vsize_pixels        = ${module.framework.sf_touch_panel.vsize_pixels},
+    .priority            = ${module.framework.sf_touch_panel.priority},
+    .update_hz           = ${module.framework.sf_touch_panel.update_hz},
+    .p_message           = &amp;${module.framework.sf_touch_panel.messagename},
+    .p_extend = &amp;${module.framework.sf_touch_panel.name}_cfg_extend,
+};
+/* Instance structure to use this module. */
+const sf_touch_panel_instance_t ${module.framework.sf_touch_panel.name} = 
+{
+    .p_ctrl        = &amp;${module.framework.sf_touch_panel.name}_ctrl,
+    .p_cfg         = &amp;${module.framework.sf_touch_panel.name}_cfg,
+    .p_api         = &amp;g_sf_touch_panel_on_sf_touch_panel_i2c
+};
+</declarations>
+        <init>
+            ssp_err_t ssp_err_${module.framework.sf_touch_panel.name};
+            ssp_err_${module.framework.sf_touch_panel.name} = ${module.framework.sf_touch_panel.name}.p_api->open(${module.framework.sf_touch_panel.name}.p_ctrl, ${module.framework.sf_touch_panel.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_touch_panel.name})
+            {
+                while (1);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<synergyEditorModuleInfo>
+  <synergyEditorPacksList>
+    <pack descriptionsadded="true" path="C:\Synergy\e2_studio_4_2_0_012\internal\projectgen\arm\packs\Renesas.Synergy.1.0.0.pack" shortname="Renesas.Synergy.1.0.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Synergy\e2_studio_4_2_0_012\internal\projectgen\arm\packs\Renesas.SynergyBlinky.1.0.0.pack" shortname="Renesas.SynergyBlinky.1.0.0.pack"/>
+    <pack descriptionsadded="true" path="C:\Synergy\e2_studio_4_2_0_012\internal\projectgen\arm\packs\Renesas.SynergyBlinkyThreadX.1.0.0.pack" shortname="Renesas.SynergyBlinkyThreadX.1.0.0.pack"/>
+  </synergyEditorPacksList>
+</synergyEditorModuleInfo>

@@ -1,0 +1,1062 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.ctsu" path="ssp_cfg/driver/r_ctsu_cfg.h" version="0">
+		<property default="config.driver.ctsu.param_checking_enable.bsp" display="Parameter Checking Enable" id="config.driver.ctsu.param_checking_enable">
+			<option display="Default (BSP)" id="config.driver.ctsu.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+			<option display="Enabled" id="config.driver.ctsu.param_checking_enable.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.ctsu.param_checking_enable.disabled" value="(0)"/>
+		</property>
+		<property default="config.driver.ctsu.using_auto_tune.enabled" display="Offset Adjustment" id="config.driver.ctsu.using_auto_tune">
+			<option display="Enabled" id="config.driver.ctsu.using_auto_tune.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.ctsu.using_auto_tune.disabled" value="(0)"/>
+		</property>
+		<property default="config.driver.ctsu.using_drift_comp.enabled" display="Drift Compensation" id="config.driver.ctsu.using_drift_comp">
+			<option display="Enabled" id="config.driver.ctsu.using_drift_comp.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.ctsu.using_drift_comp.disabled" value="(0)"/>
+		</property>
+        <property default="config.driver.ctsu.drift_comp_method.option0" display="Drift Compensation Method (Valid only if Drift Compensation is enabled above)" id="config.driver.ctsu.drift_comp_method">
+			<option display="Basic" id="config.driver.ctsu.drift_comp_method.option0" value="DRIFT_COMP_BASIC"/>
+			<option display="Alternate method 1" id="config.driver.ctsu.drift_comp_method.option1" value="DRIFT_COMP_ALT_1"/>
+			<option display="Alternate method 2" id="config.driver.ctsu.drift_comp_method.option2" value="DRIFT_COMP_ALT_2"/>
+			<option display="Alternate method 3" id="config.driver.ctsu.drift_comp_method.option3" value="DRIFT_COMP_ALT_3"/>
+		</property>
+		<property default="config.driver.ctsu.using_dynamic_memory.disabled" display="Dynamic Memory Use" id="config.driver.ctsu.using_dynamic_memory">
+			<!--<option display="Enabled" id="config.driver.ctsu.using_dynamic_memory.enabled" value="(1)"/>-->
+			<option display="Disabled" id="config.driver.ctsu.using_dynamic_memory.disabled" value="(0)"/>
+		</property>
+		<property default="config.driver.ctsu.using_multi_touch.enabled" display="Multi-touch rejection" id="config.driver.ctsu.using_multi_touch">
+			<option display="Enabled" id="config.driver.ctsu.using_multi_touch.enabled" value="(1)"/>
+			<option display="Disabled" id="config.driver.ctsu.using_multi_touch.disabled" value="(0)"/>
+		</property>
+		<property default="config.driver.ctsu.dtc_use_for_ctsu.true" display="DTC Usage for CTSU" id="config.driver.ctsu.dtc_use_for_ctsu">
+			<option display="Use DTC" id="config.driver.ctsu.dtc_use_for_ctsu.true" value="(1)"/>
+            <!--<option display="Do Not Use DTC" id="config.driver.ctsu.dtc_use_for_ctsu.false" value="(0)"/>-->
+		</property>
+		<property default="1" display="Max. active channels" id="config.driver.ctsu.max_active_channels">
+			<constraint display="Value must be greater than or equal to 1">
+				"${config.driver.ctsu.max_active_channels}" &gt; 0
+			</constraint>
+			<constraint display="Value must be less than than or equal to 324">
+				"${config.driver.ctsu.max_active_channels}" &lt; 325
+			</constraint>
+		</property>
+		<content> /**
+			 * Specify whether to include code for API parameter checking. Valid settings include:
+			 *    - 1 : Includes parameter checking
+			 *    - 0 : Compiles out parameter checking
+			 */
+			#define CTSU_CFG_PARAM_CHECKING_ENABLE			${config.driver.ctsu.param_checking_enable}
+
+			/**
+			 * Define the maximum active channels that the user expects to be active in any
+			 *  configuration. */
+			#define CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS				${config.driver.ctsu.max_active_channels}
+
+			/**
+			 * Using dynamic memory reduces the footprint of the code and memory used.
+			 * The user must however ensure that the heap has enough space for allocation.
+			 * */
+			#define USE_DYNAMIC_MEMORY						${config.driver.ctsu.using_dynamic_memory}
+
+			/**
+			 * Define the window size of the l-point running average filter.
+			 * Filter output = ((pow(2, FILTER_DEPTH)-1)*previous output + input)/ pow(2, FILTER_DEPTH);
+			 * */
+			#define FILTER_DEPTH							(2)
+
+			/**
+			 * Enable/Disable Auto-tuning.
+			 * Auto-tuning ensures that the sensor count is approx. equal to the reference
+			 * count output by the CTSU when the channel is not touched. This is helpful
+			 * for maximizing sensitivity, greatly reducing the conventional constraints on
+			 * PCB layout, limits to overlay thicknesses, materials and negating the need
+			 * for calibration during manufacture process. */
+			#define CFG_AUTO_TUNE							${config.driver.ctsu.using_auto_tune}
+
+			/**
+			 * Enable/Disable Multi-touch rejection
+			 * Multi-touch rejection is a feature where auto-tuning and/or drift-
+			 * compensation are executed when no channels are being touched. This is useful
+			 * when sliders are in use.
+			 * */
+			#define MULTI_TOUCH_REJECT						${config.driver.ctsu.using_multi_touch}
+			#if (CFG_AUTO_TUNE &gt; 0)
+			/** Auto-tuning is run every N scans. N is defined using AT_TIMING */
+			#define AT_TIMING								(800)
+			/** Define the amount of deviation w.r.t the threshold at which run-time offset tuning should kick in. */
+			#define AT_THRESHOLD_PERCENT					(2)
+			/**
+			 * Initial auto-tuning can take a good amount of time. User may abort if it
+			 * extends beyond the below defined number of scans. */
+			#if (USE_DYNAMIC_MEMORY &gt; 0)
+			#define AT_MAX_DURATION							(15 * 50)
+			#else
+			#if defined(CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS)
+			#define AT_MAX_DURATION							(CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS * 50)
+			#else
+			#error "User should device how long initial auto-tuning is allowed to operate. "
+			#endif
+			#endif
+			#endif//(CFG_AUTO_TUNE &gt; 0)
+
+			/**
+			 * Define if drift compensation is to be used or not. Drift compensation will
+			 * adjust sensor baseline. This is useful when the sensor value is drifting
+			 * due to temperature, humidity, dust/dirt accumulation, etc. */
+			#define CFG_DRIFT_COMPENSATION					${config.driver.ctsu.using_drift_comp}
+
+			#if (CFG_DRIFT_COMPENSATION &gt; 0)
+			/**
+			 * Define the number of scans to take into account when calculating the initial
+			 * sensor baseline value. */
+			#define CALIB_SCAN_COUNT						(4)
+			/** Drift compensation occurs every N times. N is defined below. */
+			#define DC_TIMING								(100)
+
+			/* Methods available for drift compensation*/
+			#define DRIFT_COMP_BASIC	(0)
+			#define DRIFT_COMP_ALT_1	(1)
+			#define DRIFT_COMP_ALT_2	(2)
+			#define DRIFT_COMP_ALT_3	(3)
+			#define DRIFT_COMP_METHOD	${config.driver.ctsu.drift_comp_method}
+
+			#if (DRIFT_COMP_METHOD==DRIFT_COMP_ALT_1)
+			/* DO NOT CHANGE */
+			#define DC_TIME_ADD_ON_RELEASE					(DC_TIMING)
+			#elif (DRIFT_COMP_METHOD==DRIFT_COMP_ALT_2)
+			/* Add 4x time to drift compensation when key is released */
+			#define DC_TIME_ADD_ON_RELEASE					(DC_TIMING &gt;&gt; 1)
+			#endif
+
+			#endif//(CFG_DRIFT_COMPENSATION &gt; 0)
+
+			#if !defined(CTSU_CFG_MAX_ACTIVE_CHANNEL_COMBOS)
+			#error "User should allow dynamic memory usage or define the maximum active channels intended for use."
+			#endif
+
+            /**
+            * Define if your board has capacitive touch buttons
+            * This option is deprecated and MUST be set to 0
+            **/
+			#define USING_CAPTOUCH_BUTTONS		(0)
+            /**
+            * Define if your board has capacitive touch sliders
+            * This option is deprecated and MUST be set to 0
+            * */
+			#define USING_CAPTOUCH_SLIDER		(0)
+
+			#define USING_USB_COMM	(0)
+
+			/**
+			 * Define if DTC block transfers should be used for moving data instead of CPU ISR
+			 *
+			 * 	0 - Not used
+			 * 	1 - Use DTC block transfers in long address mode (Recommended)
+			 * */
+			#define USING_DTC_FOR_CTSU	 (${config.driver.ctsu.dtc_use_for_ctsu})
+
+			#if (CFG_AUTO_TUNE &lt;= 0)
+			#warning "Initial and Run-time auto-calibration/tuning has been disabled. This is not recommended."
+			#endif
+
+			#if (CFG_DRIFT_COMPENSATION &lt;=0)
+			#warning "Initial baseline setup and Run-time drift compensation has been disabled. This is not recommended."
+			#endif
+		</content>
+	</config>
+	<module config="config.driver.ctsu" display="Driver|Input|${module.driver.ctsu.name} CTSU Driver on r_ctsu" id="module.driver.touch_on_ctsu" version="1">		
+		<constraint display="Unique name required for each instance">
+			"${interface.driver.ctsu.${module.driver.ctsu.name}}" === "1"
+		</constraint>
+		<constraint display="Requires CTSU Interrupt (Write) enabled in ICU">
+			"${board.icu.ctsu.write}" != "board.icu.common.irq.disabled"
+		</constraint>
+		<constraint display="Requires CTSU Interrupt (Read) enabled in ICU">
+			"${board.icu.ctsu.read}" != "board.icu.common.irq.disabled"
+		</constraint>
+		<constraint display="Requires CTSU Interrupt (End) enabled in ICU">
+			"${board.icu.ctsu.end}" != "board.icu.common.irq.disabled"
+		</constraint>
+        <constraint display="Requires one DTC Transfer Instance named ${module.driver.ctsu.dtc_use_for_ctsu.name}">
+            "${interface.driver.dtc.${module.driver.ctsu.dtc_use_for_ctsu.name}}" === "1"
+        </constraint>
+        <requires interface="interface.driver.dtc.${module.driver.ctsu.dtc_use_for_ctsu.name}" >
+			<override property="module.driver.transfer.size" value= "module.driver.transfer.size.size_2_byte"/>
+			<override property="module.driver.transfer.mode" value= "module.driver.transfer.mode.mode_block"/>
+			<override property="module.driver.transfer.dest_addr_mode" value="module.driver.transfer.dest_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.src_addr_mode" value="module.driver.transfer.src_addr_mode.addr_mode_incremented"/>
+			<override property="module.driver.transfer.repeat_area" value="module.driver.transfer.repeat_area.repeat_area_source"/>
+			<override property="module.driver.transfer.p_dest" value="NULL"/>
+			<override property="module.driver.transfer.p_src" value="NULL"/>
+			<override property="module.driver.transfer.length" value="1"/>
+			<override property="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
+			<override property="module.driver.transfer.num_blocks" value="1"/>
+			<override property="module.driver.transfer.auto_enable" value="module.driver.transfer.auto_enable.false"/>
+			<override property="module.driver.transfer.p_callback" value="NULL"/>
+			<override property="module.driver.transfer.activation_source" value="module.driver.transfer.event.event_ctsu_end"/>
+		</requires>
+		<provides interface="interface.driver.ctsu.${module.driver.ctsu.name}" />
+		<provides interface="interface.driver.ctsu" />
+		<property default="g_ctsu" display="Name" id="module.driver.ctsu.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.name}")</constraint>
+		</property>
+		<property default="g_transfer" display="DTC Transfer Name" id="module.driver.ctsu.dtc_use_for_ctsu.name">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.dtc_use_for_ctsu.name}")</constraint>
+		</property>
+        <property default="g_ctsu_config" display="CTSU configuration used" id="module.driver.ctsu.uses_config">
+			<constraint display="Name must be a valid C symbol"> testSymbol("${module.driver.ctsu.uses_config}")</constraint>
+		</property>
+		<property default="NULL" display="Callback" id="module.driver.ctsu.p_callback">
+			<constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.p_callback}")</constraint>
+        </property>
+         <property default="module.driver.ctsu.using_processing.default" display="Data Processing Option" id="module.driver.ctsu.using_processing">
+			<option display="Default Processing (Recommended)" id="module.driver.ctsu.using_processing.default" value="CTSU_PROCESS_OPTION_DEFAULT_SETTING"/>
+			<option display="No Processing (Tuning Only)" id="module.driver.ctsu.using_processing.none" value="CTSU_PROCESS_OPTION_NONE"/>
+		</property>
+        <interrupt node="board.icu.ctsu.write" />
+        <interrupt node="board.icu.ctsu.read" />
+        <interrupt node="board.icu.ctsu.end" />
+		<header>
+        
+		/** Pointer to a tuned CTSU configuration */
+		extern ctsu_hw_cfg_t ${module.driver.ctsu.uses_config};
+		
+		/** Pointer to CTSU API */
+		extern const ctsu_api_t * ${module.driver.ctsu.name}_api;
+		
+		/** Pointer to CTSU configuration */
+		extern ctsu_cfg_t ${module.driver.ctsu.name}_cfg_on_ctsu;
+		
+		/** Pointer to control handle */
+		extern ctsu_ctrl_t     ${module.driver.ctsu.name}_ctrl;
+		
+        /**  CTSU instance */
+        extern ctsu_instance_t ${module.driver.ctsu.name}; 
+        
+        /** Pointer to Advanced Functions*/
+		extern ctsu_functions_t ${module.driver.ctsu.name}_functions;
+		
+        #ifdef ${module.driver.ctsu.p_callback}
+#define TOUCH_ON_CTSU_CALLBACK_USED_${module.driver.ctsu.name} (0)
+#else
+#define TOUCH_ON_CTSU_CALLBACK_USED_${module.driver.ctsu.name} (1)
+#endif
+#if TOUCH_ON_CTSU_CALLBACK_USED_${module.driver.ctsu.name}
+void ${module.driver.ctsu.p_callback}(ctsu_callback_args_t * p_args);
+#endif
+		</header>
+		<includes>
+		/* Include the headers for the r_touch API use */
+		#include &quot;r_ctsu_api.h&quot;
+		#include &quot;r_ctsu.h&quot;
+        #include &quot;r_dtc.h&quot;
+		
+		</includes>
+		<declarations>
+        
+        /** DTC Structures that will be used by the CTSU */
+        
+        extern const transfer_instance_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer;
+        extern const transfer_instance_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer;
+
+        transfer_ctrl_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_ctrl;
+        transfer_info_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_info[3] =
+        {
+        [0] = {
+                .dest_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .repeat_area = TRANSFER_REPEAT_AREA_DESTINATION,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_BLOCK,
+                .p_src = (void * volatile ) NULL,
+                .num_blocks = 65535,
+                .length = 3,
+        },
+        [1] = {/* Reloads p_src in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_4_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void * volatile ) &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_info[0].p_src,
+                .length = 1,
+        },
+        [2] = {/* Reloads num_blocks in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_DISABLED,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void * volatile ) &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_info[0].num_blocks,
+                .length = 1,
+        },
+};
+const transfer_cfg_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_cfg =
+{
+        .p_info =   &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_info[0],
+        .activation_source = ELC_EVENT_CTSU_WRITE,
+        .auto_enable = true,
+        .p_callback = NULL,
+        .p_context = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer,
+};
+/* Instance structure to use this module. */
+const transfer_instance_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer =
+{
+        .p_ctrl = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_ctrl,
+        .p_cfg = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer_cfg,
+        .p_api = &amp;g_transfer_on_dtc
+};
+/******************************************************/
+/* CTSUWR Transfer element to use for Synergy driver  */
+/******************************************************/
+transfer_ctrl_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_ctrl;
+transfer_info_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_info[3] =
+{
+        [0] = {
+                .dest_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_INCREMENTED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_BLOCK,
+                .p_dest = (void * volatile ) NULL,
+                .num_blocks = 65535,
+                .length = 2,
+        },
+        [1] = {/* Reloads p_src in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_END,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_4_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void * volatile ) &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_info[0].p_dest,
+                .length = 1,
+        },
+        [2] = {/* Reloads num_blocks in the 0th block */
+                .dest_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .repeat_area = TRANSFER_REPEAT_AREA_SOURCE,
+                .irq = TRANSFER_IRQ_END,
+                .chain_mode = TRANSFER_CHAIN_MODE_DISABLED,
+                .src_addr_mode = TRANSFER_ADDR_MODE_FIXED,
+                .size = TRANSFER_SIZE_2_BYTE,
+                .mode = TRANSFER_MODE_REPEAT,
+                .p_dest = (void * volatile ) &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_info[0].num_blocks,
+                .length = 1,
+        },
+};
+const transfer_cfg_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_cfg =
+{
+        .p_info = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_info[0],
+        .activation_source = ELC_EVENT_CTSU_READ,
+        .auto_enable = true,
+        .p_callback = NULL,
+        .p_context = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer,
+};
+/* Instance structure to use this module. */
+const transfer_instance_t ${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer =
+{
+        .p_ctrl = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_ctrl,
+        .p_cfg = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer_cfg,
+        .p_api = &amp;g_transfer_on_dtc
+};
+
+
+
+
+		
+		#if TOUCH_ON_CTSU_CALLBACK_USED_${module.driver.ctsu.name}
+		#if defined(__ICCARM__)
+		#define ${module.driver.ctsu.p_callback}_WEAK_ATTRIBUTE
+		#pragma weak ${module.driver.ctsu.p_callback}
+        ${module.driver.ctsu.p_callback}_internal
+		#elif defined(__GNUC__)
+		#define ${module.driver.ctsu.p_callback}_WEAK_ATTRIBUTE __attribute__ ((weak, alias("${module.driver.ctsu.p_callback}_internal")))
+		#endif
+		void ${module.driver.ctsu.p_callback}(ctsu_callback_args_t * p_args) ${module.driver.ctsu.p_callback}_WEAK_ATTRIBUTE;
+		#endif
+		
+		/* Data functions to use for advanced usage.*/
+		ctsu_functions_t ${module.driver.ctsu.name}_functions = { 0 };
+		
+		#if TOUCH_ON_CTSU_CALLBACK_USED_${module.driver.ctsu.name}
+		/*******************************************************************************************************************//**
+		 * @brief      This is a weak example callback function.  It should be overridden by defining a user callback function 
+		 *             with the prototype below.
+		 *               - void ${module.driver.ctsu.p_callback}(ctsu_callback_args_t * p_args)
+		 *
+		 * @param[in]  p_args  Callback arguments used to identify what caused the callback.
+		 **********************************************************************************************************************/
+         void ${module.driver.ctsu.p_callback}_internal(ctsu_callback_args_t * p_args);
+		void ${module.driver.ctsu.p_callback}_internal(ctsu_callback_args_t * p_args)
+		{
+			/** DO NOT EDIT */
+            /** Do nothing. */
+            SSP_PARAMETER_NOT_USED(p_args);
+		}
+		#endif
+		
+		ctsu_ctrl_t    ${module.driver.ctsu.name}_ctrl;
+		ctsu_cfg_t     ${module.driver.ctsu.name}_cfg = 
+		{
+            .p_lower_lvl_transfer_read = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsurd_block_xfer,
+            .p_lower_lvl_transfer_write = &amp;${module.driver.ctsu.dtc_use_for_ctsu.name}_ctsuwr_block_xfer,
+			.p_ctsu_hw_cfg    = 	&amp;${module.driver.ctsu.uses_config},
+			.p_ctsu_functions = 	&amp;${module.driver.ctsu.name}_functions,
+			.p_callback       =		${module.driver.ctsu.p_callback},
+            .p_context        =     &amp;${module.driver.ctsu.name}_ctrl,
+			.ctsu_soft_option = 	${module.driver.ctsu.using_processing},
+			.ctsu_close_option = 	CTSU_CLOSE_OPTION_RESET_SFRS,
+		};
+		
+        ctsu_instance_t ${module.driver.ctsu.name} =
+        {
+            .p_ctrl =   &amp;${module.driver.ctsu.name}_ctrl,
+            .p_cfg  =   &amp;${module.driver.ctsu.name}_cfg,
+            .p_api  =   &amp;g_ctsu_on_ctsu,
+        };
+		const ctsu_api_t * ${module.driver.ctsu.name}_api = &amp;g_ctsu_on_ctsu;
+		
+		</declarations>
+		<functions>
+		</functions>
+		<init>
+
+        </init>
+	</module>
+    
+    <!-- CTSU Driver XML END here-->
+   <!-- CTSU Tuning XML START here-->
+   <config id="config.driver.ctsu_tuning" path="ssp_cfg/driver/r_ctsu_tuning_cfg.h" version="0">
+
+    <property default="module.driver.ctsu_tuning.mode.self_single" display="CTSU Operating Mode" id="module.driver.ctsu_tuning.mode">
+        <option display="Self Capacitance Single Scan" id="module.driver.ctsu_tuning.mode.self_single" value="0"/>
+        <option display="Self Capacitance Multi Scan" id="module.driver.ctsu_tuning.mode.self_multi" value="1"/>
+        <option display="Mutual Capacitance Full Scan" id="module.driver.ctsu_tuning.mode.mutual_full" value="3"/>
+    </property>
+    <property default="module.driver.ctsu_tuning.clock_divider.one" display="CTSU Clock Divider Used" id="module.driver.ctsu_tuning.clock_divider">
+        <option display="PCLKB/1" id="module.driver.ctsu_tuning.clock_divider.one" value="0"/>
+        <option display="PCLKB/2" id="module.driver.ctsu_tuning.clock_divider.two" value="1"/>
+        <option display="PCLKB/4" id="module.driver.ctsu_tuning.clock_divider.four" value="2"/>
+    </property>
+    <property default="module.driver.ctsu_tuning.channel_mask.channel_0.disabled" display="TS 0" id="module.driver.ctsu_tuning.channel_0">
+        <option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_0.disabled" value="-1"/>
+        <option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_0.receive" value="0"/>
+        <option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_0.transmit" value="1"/>
+    </property>
+    <property default="module.driver.ctsu_tuning.channel_mask.channel_1.disabled" display="TS 1" id="module.driver.ctsu_tuning.channel_1">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_1.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_1.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_1.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_2.disabled" display="TS 2" id="module.driver.ctsu_tuning.channel_2">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_2.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_2.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_2.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_3.disabled" display="TS 3" id="module.driver.ctsu_tuning.channel_3">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_3.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_3.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_3.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_4.disabled" display="TS 4" id="module.driver.ctsu_tuning.channel_4">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_4.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_4.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_4.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_5.disabled" display="TS 5" id="module.driver.ctsu_tuning.channel_5">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_5.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_5.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_5.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_6.disabled" display="TS 6" id="module.driver.ctsu_tuning.channel_6">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_6.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_6.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_6.transmit" value="1"/>
+		</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_7.disabled" display="TS 7" id="module.driver.ctsu_tuning.channel_7">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_7.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_7.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_7.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_8.disabled" display="TS 8" id="module.driver.ctsu_tuning.channel_8">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_8.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_8.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_8.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_9.disabled" display="TS 9" id="module.driver.ctsu_tuning.channel_9">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_9.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_9.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_9.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_10.disabled" display="TS 10" id="module.driver.ctsu_tuning.channel_10">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_10.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_10.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_10.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_11.disabled" display="TS 11" id="module.driver.ctsu_tuning.channel_11">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_11.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_11.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_11.transmit" value="1"/>
+	</property>
+        <property default="module.driver.ctsu_tuning.channel_mask.channel_12.disabled" display="TS 12" id="module.driver.ctsu_tuning.channel_12">
+        <option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_12.disabled" value="-1"/>
+        <option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_12.receive" value="0"/>
+        <option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_12.transmit" value="1"/>
+    </property>
+    <property default="module.driver.ctsu_tuning.channel_mask.channel_13.disabled" display="TS 13" id="module.driver.ctsu_tuning.channel_13">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_13.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_13.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_13.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_14.disabled" display="TS 14" id="module.driver.ctsu_tuning.channel_14">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_14.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_14.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_14.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_15.disabled" display="TS 15" id="module.driver.ctsu_tuning.channel_15">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_15.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_15.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_15.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_16.disabled" display="TS 16" id="module.driver.ctsu_tuning.channel_16">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_16.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_16.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_16.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_17.disabled" display="TS 17" id="module.driver.ctsu_tuning.channel_17">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_17.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_17.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_17.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_18.disabled" display="TS 18" id="module.driver.ctsu_tuning.channel_18">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_18.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_18.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_18.transmit" value="1"/>
+		</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_19.disabled" display="TS 19" id="module.driver.ctsu_tuning.channel_19">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_19.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_19.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_19.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_20.disabled" display="TS 20" id="module.driver.ctsu_tuning.channel_20">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_20.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_20.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_20.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_21.disabled" display="TS 21" id="module.driver.ctsu_tuning.channel_21">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_21.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_21.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_21.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_22.disabled" display="TS 22" id="module.driver.ctsu_tuning.channel_22">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_22.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_22.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_22.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_23.disabled" display="TS 23" id="module.driver.ctsu_tuning.channel_23">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_23.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_23.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_23.transmit" value="1"/>
+	</property>
+    	<property default="module.driver.ctsu_tuning.channel_mask.channel_24.disabled" display="TS 24" id="module.driver.ctsu_tuning.channel_24">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_24.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_24.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_24.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_25.disabled" display="TS 25" id="module.driver.ctsu_tuning.channel_25">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_25.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_25.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_25.transmit" value="1"/>
+	</property>
+        <property default="module.driver.ctsu_tuning.channel_mask.channel_26.disabled" display="TS 26" id="module.driver.ctsu_tuning.channel_26">
+        <option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_26.disabled" value="-1"/>
+        <option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_26.receive" value="0"/>
+        <option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_26.transmit" value="1"/>
+    </property>
+    <property default="module.driver.ctsu_tuning.channel_mask.channel_27.disabled" display="TS 27" id="module.driver.ctsu_tuning.channel_27">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_27.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_27.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_27.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_28.disabled" display="TS 28" id="module.driver.ctsu_tuning.channel_28">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_28.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_28.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_28.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_29.disabled" display="TS 29" id="module.driver.ctsu_tuning.channel_29">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_29.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_29.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_29.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_30.disabled" display="TS 30" id="module.driver.ctsu_tuning.channel_30">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_30.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_30.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_30.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_31.disabled" display="TS 31" id="module.driver.ctsu_tuning.channel_31">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_31.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_31.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_31.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_32.disabled" display="TS 32" id="module.driver.ctsu_tuning.channel_32">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_32.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_32.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_32.transmit" value="1"/>
+		</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_33.disabled" display="TS 33" id="module.driver.ctsu_tuning.channel_33">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_33.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_33.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_33.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_34.disabled" display="TS 34" id="module.driver.ctsu_tuning.channel_34">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_34.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_34.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_34.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_35.disabled" display="TS 35" id="module.driver.ctsu_tuning.channel_35">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_35.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_35.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_35.transmit" value="1"/>
+	</property>
+	<property default="module.driver.ctsu_tuning.channel_mask.channel_36.disabled" display="TS 36" id="module.driver.ctsu_tuning.channel_36">
+		<option display="Not Used" id="module.driver.ctsu_tuning.channel_mask.channel_36.disabled" value="-1"/>
+		<option display="Used as RX or Primary channel" id="module.driver.ctsu_tuning.channel_mask.channel_36.receive" value="0"/>
+		<option display="Used as TX or Secondary channel" id="module.driver.ctsu_tuning.channel_36.transmit" value="1"/>
+	</property>
+      <content>
+        /** This file will only be used when the CapTouch Tuning is performed. The file will be generated when the CTSU module
+        is added for normal usage also but will have no effect in that case */
+      
+        #define RECEIVE_FUNCTION    (0)
+        #define TRANSMIT_FUNCTION   (1)
+        
+        /** Specify the Mode that the CTSU will be used in 
+            0 = Self-capacitance single scan mode
+            1 = Self-capacitance multi-scan mode
+            2 = Setting prohibited
+            3 = Mutual capacitance full scan mode
+        */
+        #define DF_CTSUMD       (${module.driver.ctsu_tuning.mode})
+        /** Specify the PCLK Divider Configured by the BSP module
+            0 = PCLK
+            1 = PCLK/2
+            2 = PCLK/4
+        */
+        #define DF_CTSUCLK      (${module.driver.ctsu_tuning.clock_divider})
+        
+        /** Define what channels are used and if they are in Transmit or Receive (Mutual Mode) Mode */
+        #if ${module.driver.ctsu_tuning.channel_0}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS00	(1)
+		#define DF_TS00_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_0}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS00	(1)
+		#define DF_TS00_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS00	(0)
+		#define DF_TS00_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_1}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS01	(1)
+		#define DF_TS01_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_1}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS01	(1)
+		#define DF_TS01_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS01	(0)
+		#define DF_TS01_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_2}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS02	(1)
+		#define DF_TS02_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_2}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS02	(1)
+		#define DF_TS02_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS02	(0)
+		#define DF_TS02_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_3}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS03	(1)
+		#define DF_TS03_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_3}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS03	(1)
+		#define DF_TS03_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS03	(0)
+		#define DF_TS03_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_4}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS04	(1)
+		#define DF_TS04_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_4}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS04	(1)
+		#define DF_TS04_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS04	(0)
+		#define DF_TS04_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_5}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS05	(1)
+		#define DF_TS05_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_5}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS05	(1)
+		#define DF_TS05_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS05	(0)
+		#define DF_TS05_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_6}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS06	(1)
+		#define DF_TS06_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_6}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS06	(1)
+		#define DF_TS06_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS06	(0)
+		#define DF_TS06_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_7}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS07	(1)
+		#define DF_TS07_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_7}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS07	(1)
+		#define DF_TS07_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS07	(0)
+		#define DF_TS07_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_8}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS08	(1)
+		#define DF_TS08_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_8}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS08	(1)
+		#define DF_TS08_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS08	(0)
+		#define DF_TS08_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_9}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS09	(1)
+		#define DF_TS09_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_9}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS09	(1)
+		#define DF_TS09_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS09	(0)
+		#define DF_TS09_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_10}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS10	(1)
+		#define DF_TS10_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_10}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS10	(1)
+		#define DF_TS10_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS10	(0)
+		#define DF_TS10_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_11}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS11	(1)
+		#define DF_TS11_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_11}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS11	(1)
+		#define DF_TS11_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS11	(0)
+		#define DF_TS11_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+        
+        #if ${module.driver.ctsu_tuning.channel_12}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS12	(1)
+		#define DF_TS12_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_12}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS12	(1)
+		#define DF_TS12_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS12	(0)
+		#define DF_TS12_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_13}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS13	(1)
+		#define DF_TS13_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_13}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS13	(1)
+		#define DF_TS13_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS13	(0)
+		#define DF_TS13_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_14}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS14	(1)
+		#define DF_TS14_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_14}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS14	(1)
+		#define DF_TS14_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS14	(0)
+		#define DF_TS14_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_15}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS15	(1)
+		#define DF_TS15_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_15}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS15	(1)
+		#define DF_TS15_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS15	(0)
+		#define DF_TS15_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_16}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS16	(1)
+		#define DF_TS16_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_16}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS16	(1)
+		#define DF_TS16_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS16	(0)
+		#define DF_TS16_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_17}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS17	(1)
+		#define DF_TS17_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_17}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS17	(1)
+		#define DF_TS17_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS17	(0)
+		#define DF_TS17_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_18}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS18	(1)
+		#define DF_TS18_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_18}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS18	(1)
+		#define DF_TS18_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS18	(0)
+		#define DF_TS18_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_19}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS19	(1)
+		#define DF_TS19_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_19}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS19	(1)
+		#define DF_TS19_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS19	(0)
+		#define DF_TS19_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_20}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS20	(1)
+		#define DF_TS20_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_20}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS20	(1)
+		#define DF_TS20_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS20	(0)
+		#define DF_TS20_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_21}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS21	(1)
+		#define DF_TS21_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_21}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS21	(1)
+		#define DF_TS21_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS21	(0)
+		#define DF_TS21_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_22}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS22	(1)
+		#define DF_TS22_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_22}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS22	(1)
+		#define DF_TS22_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS22	(0)
+		#define DF_TS22_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_23}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS23	(1)
+		#define DF_TS23_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_23}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS23	(1)
+		#define DF_TS23_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS23	(0)
+		#define DF_TS23_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+        
+        #if ${module.driver.ctsu_tuning.channel_24}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS24	(1)
+		#define DF_TS24_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_24}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS24	(1)
+		#define DF_TS24_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS24	(0)
+		#define DF_TS24_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_25}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS25	(1)
+		#define DF_TS25_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_25}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS25	(1)
+		#define DF_TS25_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS25	(0)
+		#define DF_TS25_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_26}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS26	(1)
+		#define DF_TS26_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_26}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS26	(1)
+		#define DF_TS26_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS26	(0)
+		#define DF_TS26_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_27}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS27	(1)
+		#define DF_TS27_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_27}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS27	(1)
+		#define DF_TS27_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS27	(0)
+		#define DF_TS27_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_28}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS28	(1)
+		#define DF_TS28_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_28}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS28	(1)
+		#define DF_TS28_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS28	(0)
+		#define DF_TS28_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_29}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS29	(1)
+		#define DF_TS29_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_29}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS29	(1)
+		#define DF_TS29_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS29	(0)
+		#define DF_TS29_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_30}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS30	(1)
+		#define DF_TS30_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_30}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS30	(1)
+		#define DF_TS30_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS30	(0)
+		#define DF_TS30_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_31}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS31	(1)
+		#define DF_TS31_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_31}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS31	(1)
+		#define DF_TS31_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS31	(0)
+		#define DF_TS31_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_32}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS32	(1)
+		#define DF_TS32_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_32}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS32	(1)
+		#define DF_TS32_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS32	(0)
+		#define DF_TS32_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_33}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS33	(1)
+		#define DF_TS33_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_33}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS33	(1)
+		#define DF_TS33_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS33	(0)
+		#define DF_TS33_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+		
+		#if ${module.driver.ctsu_tuning.channel_34}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS34	(1)
+		#define DF_TS34_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_34}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS34	(1)
+		#define DF_TS34_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS34	(0)
+		#define DF_TS34_FUNCTION 	(RECEIVE_FUNCTION)
+		#endif
+        
+		#if ${module.driver.ctsu_tuning.channel_35}==TRANSMIT_FUNCTION
+		#define DF_ENABLE_TS35	(1)
+		#define DF_TS35_FUNCTION 	(TRANSMIT_FUNCTION)
+		#elif ${module.driver.ctsu_tuning.channel_35}==RECEIVE_FUNCTION
+		#define DF_ENABLE_TS35	(1)
+		#define DF_TS35_FUNCTION 	(RECEIVE_FUNCTION)
+		#else
+		#define DF_ENABLE_TS35	(0)
+		#define  DF_TS35_FUNCTION 	((RECEIVE_FUNCTION))
+		#endif
+		
+      </content>
+   </config>
+   <module config="config.driver.ctsu_tuning" display="Driver|Input|CTSU Tuning on r_ctsu" id="module.driver.ctsu_tuning_on_ctsu" version="1">
+
+    <header>
+    	
+    </header>
+   </module>
+   <!-- CTSU Tuning XML END here-->
+</synergyModuleDescription>

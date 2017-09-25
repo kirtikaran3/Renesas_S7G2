@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>  
+    <config id="config.framework.sf_el_gx" path="framework/sf_el_gx_cfg.h" version="0">
+        <property default="config.framework.sf_el_gx.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_el_gx.param_checking_enable">
+            <option display="Default (BSP)" id="config.framework.sf_el_gx.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_el_gx.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_el_gx.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="config.framework.sf_el_gx.render_acceleration_2dg.enabled" display="2DG Rendering Support (valid for S7G2)" id="config.framework.sf_el_gx.render_acceleration_2dg">
+            <option display="Enabled" id="config.framework.sf_el_gx.render_acceleration_2dg.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_el_gx.render_acceleration_2dg.disabled" value="(0)"/>
+        </property>
+        <property default="config.framework.sf_el_gx.render_acceleration_jpeg.enabled" display="JPEG Rendering Support (valid for S7G2)" id="config.framework.sf_el_gx.render_acceleration_jpeg">
+            <option display="Enabled" id="config.framework.sf_el_gx.render_acceleration_jpeg.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_el_gx.render_acceleration_jpeg.disabled" value="(0)"/>
+        </property>
+        <content>
+            #define SF_EL_GX_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_el_gx.param_checking_enable}
+            #define SF_EL_GX_CFG_RENDERING_SUPPORT_2DG_ENABLE  ${config.framework.sf_el_gx.render_acceleration_2dg}
+            #define SF_EL_GX_CFG_RENDERING_SUPPORT_JPEG_ENABLE ${config.framework.sf_el_gx.render_acceleration_jpeg}
+        </content>
+    </config>
+    <module config="config.framework.sf_el_gx" display="Framework|Graphics|${module.framework.sf_el_gx.name} GUIX Port on sf_el_gx" id="module.framework.sf_el_gx" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_el_gx.${module.framework.sf_el_gx.name}}" === "1"
+        </constraint>       
+        <constraint display="Requires one Display driver ${module.framework.sf_el_gx.p_display_instance}">
+            "${interface.driver.display.${module.framework.sf_el_gx.p_display_instance}}" === "1"
+        </constraint>
+        <constraint display="Requires GUIX">
+            "${interface.el.gx}" === "1"
+        </constraint>
+        <constraint display="May require SF_TES_2D_DRW Module on Dave/2d">
+            "${interface.framework.sf_tes_2d_drw}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires interface="interface.el.gx" />
+        <requires interface="interface.driver.display.${module.framework.sf_el_gx.p_display_instance}" />
+        <provides interface="interface.framework.sf_el_gx.${module.framework.sf_el_gx.name}" />
+
+        <property id="module.framework.sf_el_gx.name" display="Name" default="g_sf_el_gx">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_el_gx.name}")</constraint>
+        </property>     
+        <property id="module.framework.sf_el_gx.p_display_instance" display="Name of Display Driver Instance" default="g_display">
+            <constraint display="Specifiy the Name of Display Driver Instance (NULL is not allowed).">testSymbol("${module.framework.sf_el_gx.p_display_instance}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.p_display_runtime_cfg" display="Name of Display Driver Run-time Configuration" default="g_display_runtime_cfg_bg">
+            <constraint display="Specifiy the Name of Run-time Display Configuration (NULL is not allowed).">testSymbol("${module.framework.sf_el_gx.p_display_runtime_cfg}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.p_framebuffer_a" display="Name of Frame Buffer A" default="g_display_fb_background[0]">
+            <constraint display="Specifiy the Name of Frame Buffer A (NULL is not allowed)">testSymbol("${module.framework.sf_el_gx.p_framebuffer_a}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.p_framebuffer_b" display="Name of Frame Buffer B" default="g_display_fb_background[1]">
+            <constraint display="Specifiy the Name of Frame Buffer B (NULL is allowed if creating a system with single frame buffer)">testSymbol("${module.framework.sf_el_gx.p_framebuffer_b}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.p_callback" display="Name of User Callback function" default="NULL">
+            <constraint display="Specifiy the Name of user callback function">testSymbol("${module.framework.sf_el_gx.p_callback}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.p_jpegbuffer" display="Name of JPEG Work Buffer" default="g_jpeg_buffer">
+            <constraint display="Specifiy the Name of JPEG Work Buffer(NULL is allowed if JPEG is not used)">testSymbol("${module.framework.sf_el_gx.p_jpegbuffer}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.jpegbuffer_size" display="Size of JPEG Work Buffer" default="768000">
+            <constraint display="Specifiy the Name of JPEG Work Buffer(0 is allowed if JPEG is not used)">testInteger("${module.framework.sf_el_gx.jpegbuffer_size}")</constraint>
+        </property>
+        <property id="module.framework.sf_el_gx.jpegWB_section" display="Section where JPEG Work Buffer Allocated" default="sdram">
+            <constraint display="This property must be a valid section name"> testSymbol("${module.framework.sf_el_gx.jpegWB_section}")
+            </constraint>
+        </property>
+        <header>
+#ifndef ${module.framework.sf_el_gx.p_callback}
+extern void ${module.framework.sf_el_gx.p_callback}(sf_el_gx_callback_args_t * p_arg);
+#endif
+extern sf_el_gx_instance_t ${module.framework.sf_el_gx.name};
+        </header>
+        <includes>
+#include &quot;sf_el_gx.h&quot;
+        </includes>
+        <declarations>
+#ifndef ${module.framework.sf_el_gx.p_jpegbuffer}
+#if (${module.framework.sf_el_gx.jpegbuffer_size})
+#ifdef __GNUC__
+uint8_t ${module.framework.sf_el_gx.p_jpegbuffer}[${module.framework.sf_el_gx.jpegbuffer_size}] __attribute__ ((aligned(64), section(&quot;.${module.framework.sf_el_gx.jpegWB_section}&quot;)));
+#else /* __ICCARM__ */
+#pragma data_alignment = 64
+#pragma location = &quot;.${module.framework.sf_el_gx.jpegWB_section}&quot;
+uint8_t ${module.framework.sf_el_gx.p_jpegbuffer}[${module.framework.sf_el_gx.jpegbuffer_size}];
+#endif
+#endif
+#endif
+
+static sf_el_gx_ctrl_t ${module.framework.sf_el_gx.name}_ctrl;
+static const sf_el_gx_cfg_t  ${module.framework.sf_el_gx.name}_cfg = {
+    .p_display_instance = (display_instance_t *)&amp;${module.framework.sf_el_gx.p_display_instance},
+    .p_display_runtime_cfg = &amp;${module.framework.sf_el_gx.p_display_runtime_cfg},
+    .p_framebuffer_a = ${module.framework.sf_el_gx.p_framebuffer_a},
+    .p_framebuffer_b = ${module.framework.sf_el_gx.p_framebuffer_b},
+    .p_callback = ${module.framework.sf_el_gx.p_callback},
+    .p_jpegbuffer = ${module.framework.sf_el_gx.p_jpegbuffer},
+    .jpegbuffer_size = ${module.framework.sf_el_gx.jpegbuffer_size}
+};
+sf_el_gx_instance_t ${module.framework.sf_el_gx.name} = {
+    .p_api = &amp;sf_el_gx_on_guix,
+    .p_ctrl = &amp;${module.framework.sf_el_gx.name}_ctrl,
+    .p_cfg = &amp;${module.framework.sf_el_gx.name}_cfg
+};
+        </declarations>
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <module config="config.framework.tes.dave2d" display="Framework|Graphics|D/AVE 2D Driver on dave2d" id="module.framework.tes.dave2d" version="1">
+        <constraint display="Requires one D/AVE 2D Port on sf_tes_2d_drw">
+            "${interface.framework.sf_tes_2d_drw}" === "1"
+        </constraint>
+        <requires interface="interface.framework.sf_tes_2d_drw" />
+        <provides interface="interface.framework.tes.dave2d" />
+    </module>
+</synergyModuleDescription>

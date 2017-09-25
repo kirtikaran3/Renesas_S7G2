@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.gx" path="ssp_cfg/framework/el/gx_user.h" version="0">
+        <content>
+#if (${interface.el.gx_src})
+#include "gx_src_user.h"
+#endif
+        </content>
+    </config>
+    <module config="config.el.gx" display="Framework|Graphics|GUIX on gx" id="module.el.gx" version="1">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.gx" />
+    </module>
+</synergyModuleDescription>

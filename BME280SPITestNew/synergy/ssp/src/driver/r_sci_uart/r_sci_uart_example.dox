@@ -1,0 +1,219 @@
+/***********************************************************************************************************************
+ * Copyright [2015] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+ *
+ * The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
+ * and/or its licensors ("Renesas") and subject to statutory and contractual protections.
+ *
+ * Unless otherwise expressly agreed in writing between Renesas and you: 1) you may not use, copy, modify, distribute,
+ * display, or perform the contents; 2) you may not use any name or mark of Renesas for advertising or publicity
+ * purposes or in connection with your use of the contents; 3) RENESAS MAKES NO WARRANTY OR REPRESENTATIONS ABOUT THE
+ * SUITABILITY OF THE CONTENTS FOR ANY PURPOSE; THE CONTENTS ARE PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED
+ * WARRANTY, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+ * NON-INFRINGEMENT; AND 4) RENESAS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, OR CONSEQUENTIAL DAMAGES,
+ * INCLUDING DAMAGES RESULTING FROM LOSS OF USE, DATA, OR PROJECTS, WHETHER IN AN ACTION OF CONTRACT OR TORT, ARISING
+ * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE CONTENTS. Third-party contents included in this file may
+ * be subject to different terms.
+ **********************************************************************************************************************/
+/**********************************************************************************************************************
+* File Name    : r_sci_uart.dox
+* Description  : Extra documentation for UARTonSCI module
+***********************************************************************************************************************
+* History : DD.MM.YYYY Version Description
+*           22.03.2015 1.00    Initial Release.
+***********************************************************************************************************************/
+
+/***********************************************************************************************************************
+Functions
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn     ssp_err_t R_SCI_UartOpen (uart_ctrl_t * const p_ctrl, uart_cfg_t const * const p_cfg)
+ * 
+ * @code{.c}
+    // Example code
+    
+    // Creates a variable for the error
+    ssp_err_t   err;
+
+    // Creates a UART control block (You can use the project generater on ISDE to generate this configuration)
+    uart_ctrl_t g_uart5;
+
+    // Creates an extented configuration for UART interface
+    // (You can use the project generater on ISDE to generate this configuration)
+    uart_on_sci_cfg_t uart_sci5_cfg_t = 
+    {
+        .clk_src         = SCI_CLK_SRC_INT,
+        .baudclk_out     = false,
+        .rx_edge_start   = true,
+        .noisecancel_en  = false,
+        .noisecancel_lvl = NOISE_CANCEL_LVL1
+    };
+
+    // Creates a configuration structure (You can use the project generater on ISDE to generate this configuration)
+    uart_cfg_t g_uart5_cfg =
+    {
+        .channel        = 5,                                    // SCI channel5
+        .baud_rate      = 115200,                               // 115200bps
+        .data_bits      = UART_DATA_BITS_8,                     // Data bits 8bits
+        .parity         = UART_PARITY_OFF,                      // Parity none
+        .stop_bits      = UART_STOP_BITS_1,                     // Stop bit 1bit
+        .ctsrts_en      = false, .p_callback = (void *) user_uart_callback, // User callback function
+        .p_extend       = (void *) &uart_sci5_cfg_t             // Pointer to the UART extended configuration
+    };
+
+    // Initializes the SCI channel5 as an UART port
+    err = g_uart_on_sci.open (&g_uart5, &g_uart5_cfg);
+
+ * @endcode
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn     ssp_err_t R_SCI_UartRead (uart_ctrl_t * const p_ctrl, uint8_t const * const p_dest, uint32_t const bytes)
+ * 
+ * @code{.c}
+    // Example code
+    // The scenario of this example code is below.
+    // - SCI channel5 has been opened as UART port by uart_api_t::open()
+    // - Tries to read SCI channel5(but data has yet to be recieved in the receive circular buffer)
+    // - Polls the SCI channel5 until completing to receive 16bytes
+    // - Reads SCI channel5 again afrer SCI ISR's calling the user callback function
+    // - (user_uart_callback() sets true to receiveEnd if uart_callback_args_t::event is UART_EVENT_RX_COMPLETE)
+
+    // Creates a variable for the error
+    ssp_err_t   err;
+
+    // Creates a destination buffer
+    uint8_t dest_buffer[16];
+
+    // Global flag to be set in the SCI ISR
+    static bool receiveEnd = false;
+
+    // Reads 16bytes from the SCI channel5 as an UART port.
+    // Wait until your callback funtion is called from SCI ISR.
+    err = g_uart_on_sci.read (&g_uart5, dest_buffer, 16);
+    if (SSP_SUCCESS == err)
+    {
+        while (!receiveEnd)
+        {
+            tx_thread_sleep(1);
+        }
+    }
+    
+ * @endcode
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn     ssp_err_t R_SCI_UartWrite (uart_ctrl_t const * const p_ctrl, uint8_t const * const p_src,
+                                      uint32_t const bytes);
+ * 
+ * @code{.c}
+    // Example code
+    // The scenario of this example code is below.
+    // - SCI channel5 has been opened as UART port by uart_api_t::open()
+    // - Sends bytes to SCI channel5
+    // - Waits until completing to send 16bytes (user_uart_callback() sets true to transmitEnd
+    //   if uart_callback_args_t::event is UART_EVENT_TX_COMPLETE)
+
+    // Creates a variable for the error
+    ssp_err_t   err;
+
+    // Creates a source buffer
+    uint8_t src_buffer[16];
+
+    // Global flag to be set in the SCI ISR
+    static bool transmitEnd = false;
+    
+    // Creates 16bytes data to be sent to UART port...
+
+    // Writes 16bytes to the SCI channel5 as an UART port.
+    err = g_uart_on_sci.write (&g_uart5, src_buffer, 16);
+    while (!transmitEnd)
+    {
+        tx_thread_sleep(1);
+    }
+    
+ * @endcode
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn     ssp_err_t R_SCI_UartBaudSet (uart_ctrl_t const * const p_ctrl, uint32_t const baudrate)
+ * 
+ * @code{.c}
+    // Example code
+    // The scenario of this example code is below.
+    // - SCI channel5 has been opened as UART port by uart_api_t::open()
+    
+    // Creates a variable for the error
+    ssp_err_t   err;
+    
+    // Changes the baudrate of opened UART port
+    err = g_uart_on_sci.baudSet(&g_uart5, 9800);
+    
+ * @endcode
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn  R_SCI_UartTxFlush (uart_ctrl_t const * const p_ctrl)
+ * 
+ * @code{.c}
+    // Example code
+    // The scenario of this example code is below.
+    // - SCI channel5 has been opened as UART port by uart_api_t::open()
+    
+    // Creates a variable for the error
+    ssp_err_t   err;
+    
+    // Flushes the transmit circular buffer
+    err = g_uart_on_sci.txFlush(&g_uart5);
+    
+ * @endcode
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn  R_SCI_UartRxFlush (uart_ctrl_t const * const p_ctrl)
+ * 
+ * @code{.c}
+    // Example code
+    // The scenario of this example code is below.
+    // - SCI channel5 has been opened as UART port by uart_api_t::open()
+    
+    // Creates a variable for the error
+    ssp_err_t   err;
+    
+    // Flushes the receive circular buffer
+    err = g_uart_on_sci.rxFlush(&g_uart5);
+    
+ * @endcode
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn     ssp_err_t R_SCI_UartClose (uart_ctrl_t * const p_ctrl)
+ * 
+ * @code{.c}
+    // Example code
+    // The scenario of this example code is below.
+    // - SCI channel5 has been opened as UART port by uart_api_t::open()
+    
+    // Creates a variable for the error
+    ssp_err_t   err;
+    
+    // Closes the SCI channel5 as opened as an UART port
+    err = g_uart_on_sci.close(&g_uart5);
+    
+ * @endcode
+***********************************************************************************************************************/
+
+/*******************************************************************************************************************//**
+ * @fn     ssp_err_t R_SCI_UartVersionGet  ( ssp_version_t *  p_version )
+ * 
+ * @code{.c}
+    // Example code
+    
+    // Creates a variable the version is got
+    ssp_version_t version;
+    
+    // Gets the version of GLCD module
+    g_uart_on_sci.versionGet(&version);
+
+ * @endcode
+***********************************************************************************************************************/

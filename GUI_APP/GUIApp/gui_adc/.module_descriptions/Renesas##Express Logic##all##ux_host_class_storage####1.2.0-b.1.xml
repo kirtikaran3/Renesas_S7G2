@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_storage" path="ssp_cfg/framework/el/ux_host_class_storage_user.h" version="0">
+        <content>
+        #if (${interface.el.ux_host_class_storage_src})
+        #include "ux_host_class_storage_src_user.h"
+        #endif
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_storage" display="X-Ware|USBX|Host|Classes|Mass Storage|${module.el.host_class.name} USBX Host Class Mass Storage" common="100" id="module.el.ux_host_class_storage" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.el.ux_host_class_storage.${module.el.host_class.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires interface="interface.el.ux_host_class_storage_src" display="Add USBX Host Class Mass Storage Source [Optional]" id="module.el.ux_host_class_storage.requires.ux_host_class_storage_src" find="false" />
+        <requires id="module.el.ux_host_class_storage.requires.ux_host" interface="interface.el.ux_host" display="Add USB Host Configuration" />
+        <provides interface="interface.el.ux_host_class_storage" />
+        <provides interface="interface.el.ux_host_class_storage.${module.el.host_class.name}" />
+        <property default="g_ux_host_class_storage${_instance}" display="Name" id="module.el.host_class.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.host_class.name}")</constraint>
+        </property>
+        <header>
+            #include "ux_host_class_storage.h"
+
+            /* Pointer to a container for USBX Host Mass Storage Class */
+            extern UX_HOST_CLASS * ${module.el.host_class.name};
+            void ${module.el.host_class.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <macros>
+            #define USB_HOST_MASS_STORAGE_CLASS_REGISTER
+        </macros>
+        <declarations>
+            #if defined(__ICCARM__)
+            #define ${module.el.host_class.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.el.host_class.name}_err_callback  = ${module.el.host_class.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.el.host_class.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.el.host_class.name}_err_callback_internal")))
+            #endif
+            void ${module.el.host_class.name}_err_callback(void * p_instance, void * p_data) ${module.el.host_class.name}_err_callback_WEAK_ATTRIBUTE;
+            /* Pointer to a container for USBX Host Mass Storage Class */
+            UX_HOST_CLASS * ${module.el.host_class.name};
+            /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.el.host_class.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.el.host_class.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.el.host_class.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+            {
+            UINT status_ux_host_class_get_storage;
+            /* Get the USBX class container for the USB Host Mass Storage Class. */
+            status_ux_host_class_get_storage = ux_host_stack_class_get(_ux_system_host_class_storage_name, &amp;${module.el.host_class.name});
+            if (UX_SUCCESS != status_ux_host_class_get_storage)
+            {
+                ${module.el.host_class.name}_err_callback((void *)&amp;${module.el.host_class.name},&amp;status_ux_host_class_get_storage);
+            }
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

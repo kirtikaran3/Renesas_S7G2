@@ -1,0 +1,11 @@
+12:21:41 **** Incremental Build of configuration Debug for project S7_SK_gx_prompt_timer_1_1_0 ****
+make -j4 all 
+'Invoking: Cross ARM GNU Print Size'
+arm-none-eabi-size --format=berkeley "S7_SK_gx_prompt_timer_1_1_0.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 314744	   1528	 357456	 673728	  a47c0	S7_SK_gx_prompt_timer_1_1_0.elf
+'Finished building: S7_SK_gx_prompt_timer_1_1_0.siz'
+' '
+
+12:21:43 Build Finished. 0 errors, 0 warnings. (took 2s.391ms)
+

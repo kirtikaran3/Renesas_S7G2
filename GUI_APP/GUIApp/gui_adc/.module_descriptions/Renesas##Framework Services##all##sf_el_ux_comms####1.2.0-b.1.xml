@@ -1,0 +1,465 @@
+﻿<?xml version="1.0" ?>
+<synergyModuleDescription>
+
+    <config id="config.framework.sf_el_ux_comms" path="ssp_cfg/framework/sf_el_ux_comms_cfg_v1.h" version="0">
+        <property default="65536" display="Memory Size (Bytes)" id="config.framework.sf_comms.memory_size">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.memory_size}") &amp;&amp; "${config.framework.sf_comms.memory_size}" &gt; 0</constraint>
+        </property>
+        <property default="128" display="Read Input Buffer Size (Bytes)" id="config.framework.sf_comms.read_size">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.read_size}") &amp;&amp; "${config.framework.sf_comms.read_size}" &gt; 0</constraint>
+        </property>
+        <content>
+            #include "ux_dcd_synergy.h"
+            #define SF_EL_UX_COMMS_CFG_USB_MEMORY_SIZE_BYTES (${config.framework.sf_comms.memory_size})
+            #define SF_EL_UX_COMMS_CFG_BUFFER_MAX_LENGTH (${config.framework.sf_comms.read_size})
+        </content>
+    </config>
+    <module config="config.framework.sf_el_ux_comms" display="Framework|Connectivity|[DEPRECATED] ${module.framework.sf_comms.name} Communications Framework on sf_el_ux_comms" id="module.framework.sf_el_ux_comms" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_comms.${module.framework.sf_comms.name}}" === "1"
+        </constraint>
+        <constraint display="This module has been deprecated. Please consider moving to the updated Communications Framework on sf_el_ux_comms implementation found under Framework/Connectivity/.">
+            "${module.framework.sf_el_ux_comms.deprecation_warning}" === "module.framework.sf_el_ux_comms.deprecation_warning.disabled"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_comms.requires.ux_device_class_cdc_acm" interface="interface.el.ux_device_class_cdc_acm" display="Add USBX Device Class CDC ACM Framework" />        
+        <provides interface="interface.framework.sf_comms" />
+        <provides interface="interface.framework.sf_comms_on_sf_el_ux_comms" />
+        <provides interface="interface.framework.sf_comms.${module.framework.sf_comms.name}" />
+        <property default="g_sf_comms${_instance}" display="Name" id="module.framework.sf_comms.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.name}")</constraint>
+        </property>
+        <property default="module.framework.sf_el_ux_comms.deprecation_warning.enabled" display="Show deprecation warning" id="module.framework.sf_el_ux_comms.deprecation_warning">
+            <option display="Enabled" id="module.framework.sf_el_ux_comms.deprecation_warning.enabled" value="0"/>
+            <option display="Disabled" id="module.framework.sf_el_ux_comms.deprecation_warning.disabled" value="1"/>
+        </property>
+        <header>
+            extern const sf_comms_instance_t ${module.framework.sf_comms.name};
+            void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>
+            #include &quot;sf_el_ux_comms.h&quot;
+            #include &quot;sf_comms_api.h&quot;
+            #include &quot;sf_el_ux_comms_cfg_v1.h&quot;
+        </includes>
+        <declarations>
+
+            #if defined(__ICCARM__)
+            #define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE
+            #pragma weak ${module.framework.sf_comms.name}_err_callback  = ${module.framework.sf_comms.name}_err_callback_internal
+            #elif defined(__GNUC__)
+            #define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_comms.name}_err_callback_internal")))
+            #endif
+            void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE;
+            static unsigned char device_framework_full_speed[] =
+            {
+                /* Device descriptor 18 bytes */
+                0x12, 0x01, 0x10, 0x01,
+                0x02, 0x00, 0x00,
+                0x40,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x01,
+                0x01, 0x02, 03,
+                0x01,
+
+                /* Configuration 1 descriptor 9 bytes */
+                0x09, 0x02, 0x4b, 0x00,
+                0x02, 0x01, 0x00,
+                0x40, 0x00,
+
+                /* Interface association descriptor. 8 bytes.  */
+                0x08, 0x0b, 0x00, 0x02, 0x02, 0x02, 0x00, 0x00,
+
+                /* Communication Class Interface Descriptor Requirement. 9 bytes.   */
+                0x09, 0x04, 0x00,
+                0x00,
+                0x01,
+                0x02, 0x02, 0x01,
+                0x00,
+
+                /* Header Functional Descriptor 5 bytes */
+                0x05, 0x24, 0x00,
+                0x10, 0x01,
+
+                /* ACM Functional Descriptor 4 bytes */
+                0x04, 0x24, 0x02,
+                0x0f,
+
+                /* Union Functional Descriptor 5 bytes */
+                0x05, 0x24, 0x06,
+                0x00,                          /* Master interface */
+                0x01,                          /* Slave interface  */
+
+                /* Call Management Functional Descriptor 5 bytes */
+                0x05, 0x24, 0x01,
+                0x03,
+                0x01,                          /* Data interface   */
+
+                /* Endpoint 1 descriptor 7 bytes */
+                0x07, 0x05, 0x83,
+                0x03,
+                0x08, 0x00,
+                0xFF,
+
+                /* Data Class Interface Descriptor Requirement 9 bytes */
+                0x09, 0x04, 0x01,
+                0x00,
+                0x02,
+                0x0A, 0x00, 0x00,
+                0x00,
+
+                /* First alternate setting Endpoint 1 descriptor 7 bytes*/
+                0x07, 0x05, 0x01,
+                0x02,
+                0x40, 0x00,
+                0x00,
+
+                /* Endpoint 2 descriptor 7 bytes */
+                0x07, 0x05, 0x82,
+                0x02,
+                0x40, 0x00,
+                0x00,
+
+            };
+
+            static unsigned char device_framework_high_speed[] =
+            {
+                /* Device descriptor 18 bytes */
+                0x12, 0x01, 0x00, 0x02,
+                0x02, 0x00, 0x00,
+                0x40,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x01,
+                0x01, 0x02, 03,
+                0x01,
+
+                /* Device qualifier descriptor */
+                0x0a, 0x06, 0x00, 0x02,
+                0x02, 0x00, 0x00,
+                0x40,
+                0x01,
+                0x00,
+
+                /* Configuration 1 descriptor */
+                0x09, 0x02, 0x4b, 0x00,
+                0x02, 0x01, 0x00,
+                0x40, 0x00,
+
+                /* Interface association descriptor. */
+                0x08, 0x0b, 0x00, 0x02, 0x02, 0x02, 0x00, 0x00,
+
+                /* Communication Class Interface Descriptor Requirement */
+                0x09, 0x04, 0x01,
+                0x00,
+                0x01,
+                0x02, 0x02, 0x01,
+                0x00,
+
+                /* Header Functional Descriptor */
+                0x05, 0x24, 0x00,
+                0x10, 0x01,
+
+                /* ACM Functional Descriptor */
+                0x04, 0x24, 0x02,
+                0x0f,
+
+                /* Union Functional Descriptor */
+                0x05, 0x24, 0x06,
+                0x00,
+                0x01,
+
+                /* Call Management Functional Descriptor */
+                0x05, 0x24, 0x01,
+                0x00,
+                0x01,
+
+                /* Endpoint 1 descriptor */
+                0x07, 0x05, 0x83,
+                0x03,
+                0x08, 0x00,
+                0xFF,
+
+                /* Data Class Interface Descriptor Requirement */
+                0x09, 0x04, 0x01,
+                0x00,
+                0x02,
+                0x0A, 0x00, 0x00,
+                0x00,
+
+                /* First alternate setting Endpoint 1 descriptor */
+                0x07, 0x05, 0x01,
+                0x02,
+                0x40, 0x00,
+                0x00,
+
+                /* Endpoint 2 descriptor */
+                0x07, 0x05, 0x82,
+                0x02,
+                0x40, 0x00,
+                0x00,
+            };
+
+            static unsigned char string_framework[] =
+            {
+                /* Manufacturer string descriptor : Index 1 - "Express Logic" */
+                0x09, 0x04, 0x01, 0x0c,
+                0x45, 0x78, 0x70, 0x72,0x65, 0x73, 0x20, 0x4c,
+                0x6f, 0x67, 0x69, 0x63,
+
+                /* Product string descriptor : Index 2 - "EL Composite device" */
+                0x09, 0x04, 0x02, 0x13,
+                0x45, 0x4c, 0x20, 0x43, 0x6f, 0x6d, 0x70, 0x6f,
+                0x73, 0x69, 0x74, 0x65, 0x20, 0x64, 0x65, 0x76,
+                0x69, 0x63, 0x65,
+
+                /* Serial Number string descriptor : Index 3 - "0001" */
+                0x09, 0x04, 0x03, 0x04,
+                0x30, 0x30, 0x30, 0x31
+            };
+
+            static unsigned char language_id_framework[] =
+            {
+                /* English. */
+                0x09, 0x04
+            };
+
+            sf_el_ux_comms_instance_ctrl_t ${module.framework.sf_comms.name}_instance_ctrl =
+            {
+                .p_cdc = NULL,
+            };
+
+            /* Instance structure for ${module.framework.sf_comms.name}. */
+            const sf_comms_instance_t ${module.framework.sf_comms.name} = 
+            {
+                .p_ctrl        = &amp;${module.framework.sf_comms.name}_instance_ctrl,
+                .p_cfg         = NULL,
+                .p_api         = &amp;g_sf_el_ux_comms_on_sf_comms
+            };
+
+            /* Work memory allocation for USBX. */
+            static char ${module.framework.sf_comms.name}_workmemory[SF_EL_UX_COMMS_CFG_USB_MEMORY_SIZE_BYTES];
+
+            /* USBX CDC-ACM instance activate callback function. */
+            static void ${module.framework.sf_comms.name}_cdc_instance_activate (VOID *cdc_instance)
+            {
+                /* Save the CDC instance for ${module.framework.sf_comms.name}. */
+                ${module.framework.sf_comms.name}_instance_ctrl.p_cdc = (UX_SLAVE_CLASS_CDC_ACM *) cdc_instance;
+
+                /* Inform the CDC instance activation event for ${module.framework.sf_comms.name}. */
+                if (NULL != ${module.framework.sf_comms.name}.p_ctrl)
+                {
+                        sf_el_ux_comms_instance_ctrl_t * p_ux_comms_ctrl = (sf_el_ux_comms_instance_ctrl_t *)${module.framework.sf_comms.name}.p_ctrl;
+
+                        /* Check if the semaphore for ${module.framework.sf_comms.name} is ready. */
+                        if(0x53454D41 != p_ux_comms_ctrl->semaphore.tx_semaphore_id)
+                        {
+                            tx_semaphore_create(&amp;p_ux_comms_ctrl->semaphore, (CHAR *) "UX_COMMS_SEMAPHORE", 0);
+                        }
+
+                        /* Put a semaphore if the instance for ${module.framework.sf_comms.name} to inform CDC instance is ready. */
+                        tx_semaphore_ceiling_put(&amp;p_ux_comms_ctrl->semaphore, 1);
+                }
+                return;
+            }
+
+            /* USBX CDC-ACM instance deactivate callback function. */
+            static void ${module.framework.sf_comms.name}_cdc_instance_deactivate (VOID *cdc_instance)
+            {
+                SSP_PARAMETER_NOT_USED(cdc_instance);
+
+                /* Reset the CDC instance for ${module.framework.sf_comms.name}. */
+                ${module.framework.sf_comms.name}_instance_ctrl.p_cdc = UX_NULL;
+
+                return;
+            }
+             /*******************************************************************************************************************//**
+             * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+             *             with the prototype below.
+             *             - void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data)
+             *
+             * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+             **********************************************************************************************************************/
+            void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data);
+            void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data)
+            {
+              /** Suppress compiler warning for not using parameters. */
+              SSP_PARAMETER_NOT_USED(p_instance);
+              SSP_PARAMETER_NOT_USED(p_data);
+
+              /** An error has occurred. Please check function arguments for more information. */
+              BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </declarations>
+        <init>
+
+            /* Initialize USBX work memory */
+            ux_system_initialize(${module.framework.sf_comms.name}_workmemory, SF_EL_UX_COMMS_CFG_USB_MEMORY_SIZE_BYTES, UX_NULL, 0);
+
+            /* The code below is required for installing the device portion of USBX. No call back for
+               device status change in this example. */
+            UINT status =  _ux_device_stack_initialize(device_framework_high_speed, sizeof(device_framework_high_speed),
+                                               device_framework_full_speed, sizeof(device_framework_full_speed),
+                                               string_framework, sizeof(string_framework),
+                                               language_id_framework, sizeof(language_id_framework), UX_NULL);
+
+            if (status != UX_SUCCESS)
+            {
+                ${module.framework.sf_comms.name}_err_callback((void *)&amp;${module.framework.sf_comms.name},&amp;status);
+            }
+
+            /* Set the parameters for callback when insertion/extraction of a CDC device. */
+            UX_SLAVE_CLASS_CDC_ACM_PARAMETER    parameter;
+            parameter.ux_slave_class_cdc_acm_instance_activate   =  ${module.framework.sf_comms.name}_cdc_instance_activate;
+            parameter.ux_slave_class_cdc_acm_instance_deactivate =  ${module.framework.sf_comms.name}_cdc_instance_deactivate;
+
+            /* Initialize the device CDC-ACM class. This class owns both interfaces starting with 1. */
+             status =  _ux_device_stack_class_register(_ux_system_slave_class_cdc_acm_name, _ux_device_class_cdc_acm_entry,
+                                                        1,0,  &amp;parameter);
+             if (status != UX_SUCCESS)
+             {
+                ${module.framework.sf_comms.name}_err_callback((void *)&amp;${module.framework.sf_comms.name},&amp;status);
+             }
+
+            /* Initialize USBFS controller. */
+             _ux_dcd_synergy_initialize((ULONG) R_USBFS);
+
+            /* Open ${module.framework.sf_comms.name}. */
+            ssp_err_t ssp_err_${module.framework.sf_comms.name};
+            ssp_err_${module.framework.sf_comms.name} = ${module.framework.sf_comms.name}.p_api->open(${module.framework.sf_comms.name}.p_ctrl, ${module.framework.sf_comms.name}.p_cfg);
+            if (SSP_SUCCESS != ssp_err_${module.framework.sf_comms.name})
+            {
+               ${module.framework.sf_comms.name}_err_callback((void *)&amp;${module.framework.sf_comms.name},&amp;ssp_err_${module.framework.sf_comms.name});
+            }
+        </init>
+    </module>
+
+    <config id="config.framework.sf_el_ux_comms_v2" path="ssp_cfg/framework/sf_el_ux_comms_cfg.h" version="0">
+        <property default="config.framework.sf_comms.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_comms.param_checking_enable">
+            <option display="Default (BSP)" id="config.driver.sf_audio_playback.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_comms.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_comms.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <property default="128" display="Read Input Buffer Size (Bytes)" id="config.framework.sf_comms.read_size">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.read_size}") &amp;&amp; "${config.framework.sf_comms.read_size}" &gt; 0</constraint>
+        </property>
+        <property default="1000" display="Timeout in ticks" id="config.framework.sf_comms.timeout">
+            <constraint display="Value must be greater than 0">testInteger("${config.framework.sf_comms.timeout}") &amp;&amp; "${config.framework.sf_comms.timeout}" &gt; 0</constraint>
+        </property>
+        <content>
+        #define SF_EL_UX_COMMS_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_comms.param_checking_enable}
+        #define SF_EL_UX_COMMS_CFG_BUFFER_MAX_LENGTH (${config.framework.sf_comms.read_size})
+        #define SF_EL_UX_COMMS_CFG_BUFFER_TIMEOUT_COUNT (${config.framework.sf_comms.timeout})
+        </content>
+    </config>
+    <module config="config.framework.sf_el_ux_comms_v2" display="Framework|Connectivity|${module.framework.sf_comms.name} Communications Framework on sf_el_ux_comms" id="module.framework.sf_el_ux_comms_v2" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_comms.${module.framework.sf_comms.name}}" === "1"
+        </constraint>
+        <requires interface="_rtos" />
+        <requires id="module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2" interface="interface.el.ux_device_class_cdc_acm_v2" display="Add USBX Device Class CDC ACM Framework" />
+        <provides interface="interface.framework.sf_comms" />
+        <provides interface="interface.framework.sf_comms_on_sf_el_ux_comms" />
+        <provides interface="interface.framework.sf_comms.${module.framework.sf_comms.name}" />
+        <property default="g_sf_comms${_instance}" display="Name" id="module.framework.sf_comms.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_comms.name}")</constraint>
+        </property>
+        <header>
+            /* USB Communication Framework Instance */
+            extern const sf_comms_instance_t ${module.framework.sf_comms.name};
+            /* USBX CDC-ACM Instance Activate User Callback Function */
+            VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_activate} (VOID *cdc_instance);
+            /* USBX CDC-ACM Instance Deactivate User Callback Function */
+            VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate} (VOID *cdc_instance);
+            void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data);
+        </header>
+        <includes>#include &quot;sf_el_ux_comms.h&quot;
+#include &quot;sf_comms_api.h&quot;</includes>
+        <declarations>
+#if defined(__ICCARM__)
+#define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE
+#pragma weak ${module.framework.sf_comms.name}_err_callback  = ${module.framework.sf_comms.name}_err_callback_internal
+#elif defined(__GNUC__)
+#define ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE   __attribute__ ((weak, alias("${module.framework.sf_comms.name}_err_callback_internal")))
+#endif
+void ${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data) ${module.framework.sf_comms.name}_err_callback_WEAK_ATTRIBUTE;
+/***********************************************************************************************************************
+ * USB Communications Framework (SF_EL_UX_COMMS) Instance for ${module.framework.sf_comms.name}
+ **********************************************************************************************************************/
+sf_el_ux_comms_instance_ctrl_t ${module.framework.sf_comms.name}_instance_ctrl =
+{
+    .p_cdc = NULL,
+};
+
+/* Instance structure to use this module. */
+const sf_comms_instance_t ${module.framework.sf_comms.name} = 
+{
+    .p_ctrl        = &amp;${module.framework.sf_comms.name}_instance_ctrl,
+    .p_cfg         = NULL,
+    .p_api         = &amp;g_sf_el_ux_comms_on_sf_comms
+};
+
+/***********************************************************************************************************************
+ * USBX Device CDC-ACM Instance Activate Callback function required for ${module.framework.sf_comms.name}
+ **********************************************************************************************************************/
+VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_activate} (VOID *cdc_instance)
+{
+    /* Save the CDC instance for ${module.framework.sf_comms.name}. */
+    g_sf_comms0_instance_ctrl.p_cdc = (UX_SLAVE_CLASS_CDC_ACM *) cdc_instance;
+
+    /* Inform the CDC instance activation event for ${module.framework.sf_comms.name}. */
+    if (NULL != ${module.framework.sf_comms.name}.p_ctrl)
+    {
+            sf_el_ux_comms_instance_ctrl_t * p_ux_comms_ctrl = (sf_el_ux_comms_instance_ctrl_t *)${module.framework.sf_comms.name}.p_ctrl;
+
+            /* Check if the semaphore for ${module.framework.sf_comms.name} is ready. */
+            if(0x53454D41 != p_ux_comms_ctrl->semaphore.tx_semaphore_id)
+            {
+                tx_semaphore_create(&amp;p_ux_comms_ctrl->semaphore, (CHAR *) "UX_COMMS_SEMAPHORE", 0);
+            }
+
+            /* Put a semaphore if the instance for ${module.framework.sf_comms.name} to inform CDC instance is ready. */
+            tx_semaphore_ceiling_put(&amp;p_ux_comms_ctrl->semaphore, 1);
+    }
+    return;
+}
+/***********************************************************************************************************************
+ * USBX Device CDC-ACM Instance Deactivate Callback function required for ${module.framework.sf_comms.name}
+ **********************************************************************************************************************/
+VOID ${module.framework.sf_el_ux_comms_v2.requires.ux_device_class_cdc_acm_v2::module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate} (VOID *cdc_instance)
+{
+    SSP_PARAMETER_NOT_USED(cdc_instance);
+
+    /* Reset the CDC instance for ${module.framework.sf_comms.name}. */
+    g_sf_comms0_instance_ctrl.p_cdc = UX_NULL;
+
+    return;
+}
+ /*******************************************************************************************************************//**
+  * @brief      This is a weak example initialization error function.  It should be overridden by defining a user  function 
+  *             with the prototype below.
+  *             - void${module.framework.sf_comms.name}_err_callback(void * p_instance, void * p_data)
+  *
+  * @param[in]  p_instance arguments used to identify which instance caused the error and p_data Callback arguments used to identify what error caused the callback.
+  **********************************************************************************************************************/
+ void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data);
+ void ${module.framework.sf_comms.name}_err_callback_internal(void * p_instance, void * p_data)
+ {
+   /** Suppress compiler warning for not using parameters. */
+   SSP_PARAMETER_NOT_USED(p_instance);
+   SSP_PARAMETER_NOT_USED(p_data);
+
+   /** An error has occurred. Please check function arguments for more information. */
+   BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+ }
+        </declarations>
+        <init>
+            ssp_err_t ssp_err_${module.framework.sf_comms.name};
+            /* Open USB Communications Framework */
+            ssp_err_${module.framework.sf_comms.name} = ${module.framework.sf_comms.name}.p_api->open(${module.framework.sf_comms.name}.p_ctrl, ${module.framework.sf_comms.name}.p_cfg);
+            if (UX_SUCCESS != ssp_err_${module.framework.sf_comms.name})
+            {
+               ${module.framework.sf_comms.name}_err_callback((void *)&amp;${module.framework.sf_comms.name},&amp;ssp_err_${module.framework.sf_comms.name});
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

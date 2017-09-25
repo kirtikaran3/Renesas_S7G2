@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>  
+    <config id="config.framework.sf_jpeg_decode" path="framework/sf_jpeg_decode_cfg.h" version="0">
+        <property default="config.framework.sf_jpeg_decode.param_checking_enable.bsp" display="Parameter Checking" id="config.framework.sf_jpeg_decode.param_checking_enable">
+            <option display="Default (BSP)" id="config.framework.sf_jpeg_decode.param_checking_enable.bsp" value="(BSP_CFG_PARAM_CHECKING_ENABLE)"/>
+            <option display="Enabled" id="config.framework.sf_jpeg_decode.param_checking_enable.enabled" value="(1)"/>
+            <option display="Disabled" id="config.framework.sf_jpeg_decode.param_checking_enable.disabled" value="(0)"/>
+        </property>
+        <content>
+            #define SF_JPEG_DECODE_CFG_PARAM_CHECKING_ENABLE ${config.framework.sf_jpeg_decode.param_checking_enable}
+        </content>
+    </config>
+    <module config="config.framework.sf_jpeg_decode" display="Framework|Graphics|${module.framework.sf_jpeg_decode.name} JPEG Decode Framework on sf_jpeg_decode" id="module.framework.sf_jpeg_decode" version="1">
+        <constraint display="Module instances must have unique names">
+            "${interface.framework.sf_jpeg_decode.${module.framework.sf_jpeg_decode.name}}" === "1"
+        </constraint>       
+        <constraint display="Requires one JPEG Decode Driver ${module.framework.sf_jpeg_decode.g_lower_lvl_instance}">
+            "${interface.driver.jpeg_decode.${module.framework.sf_jpeg_decode.g_lower_lvl_instance}}" === "1"
+        </constraint>
+        <requires interface="interface.driver.jpeg_decode.${module.framework.sf_jpeg_decode.g_lower_lvl_instance}" />
+        <requires interface="_rtos" />
+        <provides interface="interface.framework.sf_jpeg_decode.${module.framework.sf_jpeg_decode.name}" />
+
+        <property id="module.framework.sf_jpeg_decode.name" display="Name" default="g_sf_jpeg_decode">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_jpeg_decode.name}")</constraint>
+        </property>
+        <property id="module.framework.sf_jpeg_decode.g_lower_lvl_instance" display="Name of JPEG Decode HAL Driver Instance" default="g_jpeg_decode">
+            <constraint display="Specifiy the Name of Display Driver Instance (NULL is not allowed).">testSymbol("${module.framework.sf_jpeg_decode.g_lower_lvl_instance}")</constraint>
+        </property>
+        <property id="module.framework.sf_jpeg_decode.g_lower_lvl_cfg" display="Name of JPEG Decode HAL Driver Configuration" default="g_jpeg_decode_cfg">
+            <constraint display="Specifiy the Name of Run-time Display Configuration (NULL is not allowed).">testSymbol("${module.framework.sf_jpeg_decode.g_lower_lvl_cfg}")</constraint>
+        </property>
+        <header>
+extern const sf_jpeg_decode_instance_t ${module.framework.sf_jpeg_decode.name};
+        </header>
+        <includes>
+#include &quot;sf_jpeg_decode.h&quot;
+        </includes>
+        <declarations>
+static sf_jpeg_decode_ctrl_t ${module.framework.sf_jpeg_decode.name}_ctrl;
+
+static const sf_jpeg_decode_cfg_t  ${module.framework.sf_jpeg_decode.name}_cfg = {
+    .p_lower_lvl_api = (jpeg_decode_api_t const *)&amp;g_jpeg_decode_on_jpeg_decode,
+    .p_lower_lvl_cfg = (jpeg_decode_cfg_t const *)&amp;${module.framework.sf_jpeg_decode.g_lower_lvl_instance}_cfg,
+};
+const sf_jpeg_decode_instance_t ${module.framework.sf_jpeg_decode.name} = {
+    .p_api = &amp;g_sf_jpeg_decode_on_sf_jpeg_decode,
+    .p_ctrl = &amp;${module.framework.sf_jpeg_decode.name}_ctrl,
+    .p_cfg = (sf_jpeg_decode_cfg_t const *)&amp;${module.framework.sf_jpeg_decode.name}_cfg
+};
+        </declarations>
+    </module>
+</synergyModuleDescription>

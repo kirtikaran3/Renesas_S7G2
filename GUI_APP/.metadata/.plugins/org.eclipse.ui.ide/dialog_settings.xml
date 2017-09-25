@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="ExternalProjectImportWizard">
+		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
+		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="C:\Users\Kirti\e2_studio\workspace\S7_SK_gx_prompt_timer_1_1_0"/>
+			<item value="C:\Users\Kirti\e2_studio\GUI_APP\S7_SK_gx_prompt_timer_1_1_0"/>
+			<item value="C:\Users\Kirti\e2_studio\workspace\GUI_APP\gui_adc"/>
+			<item value="C:\Users\Kirti\e2_studio\workspace\GUI_APP\S7_SK_gx_prompt_timer_1_1_0"/>
+			<item value="C:\Users\Kirti\Desktop\GuixADC\gui_adc"/>
+			<item value="C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC"/>
+			<item value="C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppButton"/>
+			<item value="C:\Users\Kirti\e2_studio\workspace\S7_SK_gx_input_demo_1_0_0g"/>
+		</list>
+		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
+			<item value=""/>
+		</list>
+	</section>
+</section>

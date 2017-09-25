@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+	<config id="config.driver.qspi" path="ssp_cfg/driver/r_qspi_cfg.h" version="0">
+		<property id="config.driver.qspi.checking" display="Parameter Checking" default="config.driver.qspi.checking.system">
+			<option id="config.driver.qspi.checking.system" display="Default (BSP)" value="(BSP_CFG_PARAM_CHECKING_ENABLE)" />		
+	 		<option id="config.driver.qspi.checking.enabled" display="Enabled" value="(1)" />
+			<option id="config.driver.qspi.checking.disabled" display="Disabled" value="(0)" />				
+		</property>			
+		<content>#define QSPI_CFG_PARAM_CHECKING_ENABLE ${config.driver.qspi.checking}</content>
+	</config>
+	<module config="config.driver.qspi" display="Driver|System|${module.driver.qspi.name} QSPI Driver on r_qspi" id="module.driver.qspi_on_qspi" version="1">
+        <constraint display="Only one QSPI driver instance is allowed">
+            "${interface.driver.qspi_on_qspi}" === "1"
+        </constraint>
+        <provides interface="interface.driver.qspi_on_qspi" />
+        <property default="g_qspi" display="Name [Fixed]" id="module.driver.qspi.name">
+            <constraint display="Name must be g_qspi">"${module.driver.qspi.name}" == "g_qspi"</constraint>
+        </property>        
+        <interrupt node="board.icu.qspi.software_event_0" />
+        <interrupt node="board.icu.qspi.software_event_1" />
+		<header>
+		/** QSPI Instance */
+		extern const qspi_instance_t ${module.driver.qspi.name};
+		</header>
+		<includes>
+		#include &quot;r_qspi.h&quot;
+		#include &quot;r_qspi_api.h&quot;
+		</includes>
+		<declarations>
+		const qspi_instance_t ${module.driver.qspi.name} = {
+            .p_api = &amp;g_qspi_on_qspi,
+            .p_cfg = NULL
+        };
+		</declarations>
+    </module>        
+</synergyModuleDescription>

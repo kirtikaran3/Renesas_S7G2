@@ -1,0 +1,297 @@
+Synergy Configuration
+  Board "S7G2 SK"
+    Part package: FC (LQFP/176)
+    Part memory size: H (4MB/640KB/64KB)
+    Core and Frequency: CM4, 240MHz
+    Part series: High-performance (201MHz-300MHz)
+    Main stack size (bytes): 0x1000
+    Process stack size (bytes): 0
+    Heap size (bytes): 0x400
+    OFS0 - Option Function Select Register 0: 0xFFFFFFFF
+    OFS1 - Option Function Select Register 1: 0xFFFFFFFF
+    MPU - Enable or disable PC Region 0: Disabled
+    MPU - PC0 Start: 0xFFFFFFFF
+    MPU - PC0 End: 0xFFFFFFFF
+    MPU - Enable or disable PC Region 1: Disabled
+    MPU - PC1 Start: 0xFFFFFFFF
+    MPU - PC1 End: 0xFFFFFFFF
+    MPU - Enable or disable Memory Region 0: Disabled
+    MPU - Memory Region 0 Start: 0xFFFFFFFF
+    MPU - Memory Region 0 End: 0xFFFFFFFF
+    MPU - Enable or disable Memory Region 1: Disabled
+    MPU - Memory Region 1 Start: 0xFFFFFFFF
+    MPU - Memory Region 1 End: 0xFFFFFFFF
+    MPU - Enable or disable Memory Region 2: Disabled
+    MPU - Memory Region 2 Start: 0xFFFFFFFF
+    MPU - Memory Region 2 End: 0xFFFFFFFF
+    MPU - Enable or disable Memory Region 3: Disabled
+    MPU - Memory Region 3 Start: 0xFFFFFFFF
+    MPU - Memory Region 3 End: 0xFFFFFFFF
+    ID code 1: 0xFFFFFFFF
+    ID code 2: 0xFFFFFFFF
+    ID code 3: 0xFFFFFFFF
+    ID code 4: 0xFFFFFFFF
+    MCU Vcc (mV): 3300
+    Parameter checking: Enabled
+    RTOS being used: ThreadX
+    Assert Failures: Return SSP_ERR_ASSERTION
+    Error Log: No Error Log
+    
+  Clocks
+    XTAL 24000000Hz
+    PLL Src: XTAL
+    HOCO 16MHz
+    PLL Div /2
+    PLL Mul x20.0
+    Clock Src: PLL
+    ICLK Div /1
+    PCLKA Div /2
+    PCLKB Div /4
+    PCLKC Div /4
+    PCLKD Div /2
+    SDCLKout On
+    BCLK Div /2
+    BCK/2
+    UCLK Div /5
+    FCLK Div /4
+    
+  Pin Configurations
+    S7G2-SK_BlinkyThreadX.pincfg -> g_bsp_pin_cfg
+      AVCC0 155 - - - - - - - - 
+      AVCC_USBHS 26 - - - - - - - - 
+      AVSS0 156 - - - - - - - - 
+      AVSS_USBHS 28 - - - - - - - - 
+      P000 169 "ANALOG0_AN000 / GPIO" GPIO29 - - "Analog mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P001 168 "ANALOG0_AN001 / GPIO" GPIO28 - - "Analog mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P002 167 "ANALOG0_AN002 / GPIO" GPIO27 - - "Analog mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P003 166 - - - - "Input mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P004 165 GPIO GPIO26 - IRQ9_DS "Input mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P005 164 GPIO GPIO25 - IRQ10_DS "Input mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P006 163 GPIO GPIO24 - IRQ11_DS "Input mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P007 162 - - - - "Input mode" - - "INPUT ONLY pin. DO NOT set to Output Mode!; (Only Input Mode or Analog Mode are allowed.)" 
+      P008 161 "ANALOG0_AN003 / GPIO" GPIO23 - - "Analog mode" - - - 
+      P009 160 "ANALOG0_AN004 / GPIO" GPIO22 - - "Analog mode" - - - 
+      P010 159 GPIO GPIO20 - IRQ14_DS "Input mode" - None - 
+      P014 152 "DAC_DA0 / GPIO" GPIO19 - - "Analog mode" - - - 
+      P015 151 "ANALOG0_AN006 / GPIO" GPIO18 - - "Analog mode" - - - 
+      P100 132 SPI0__PIN_OPTION_A_MISOA_A SPI0__Pin_Option_A_MISOA_A Medium - "Peripheral Mode" CMOS None - 
+      P101 131 SPI0__PIN_OPTION_A_MOSIA_A SPI0__Pin_Option_A_MOSIA_A Medium - "Peripheral Mode" CMOS None - 
+      P102 130 SPI0__PIN_OPTION_A_RSPCKA_A SPI0__Pin_Option_A_RSPCKA_A Medium - "Peripheral Mode" CMOS None - 
+      P103 129 SPI0__PIN_OPTION_A_SSLA0_A SPI0__Pin_Option_A_SSLA0_A Medium - "Peripheral Mode" CMOS None - 
+      P104 128 SCI8_RXD8_SCL8_MISO8 SCI8_RXD8_SCL8_MISO8 Medium - "Peripheral Mode" CMOS None - 
+      P105 127 SCI8_TXD8_SDA8_MOSI8 SCI8_TXD8_SDA8_MOSI8 Medium - "Peripheral Mode" CMOS None - 
+      P106 126 SCI8_SCK8 SCI8_SCK8 High - "Peripheral Mode" CMOS None - 
+      P107 125 GPIO GPIO12 Medium - "Output mode" CMOS - - 
+      P108 89 JTAG_TMS JTAG_TMS Low - "Peripheral Mode" CMOS None - 
+      P109 90 JTAG_TDO JTAG_TDO Low - "Peripheral Mode" CMOS None - 
+      P110 91 JTAG_TDI JTAG_TDI Low - "Peripheral Mode" CMOS None - 
+      P111 92 GPIO GPIO4 - IRQ4 "Input mode" - None - 
+      P112 93 GPIO GPIO5 - - "Input mode" - None - 
+      P113 94 GPIO GPIO6 Medium - "Output mode" CMOS - - 
+      P114 95 - - - - "Input mode" - None - 
+      P115 96 - - - - "Input mode" - None - 
+      P200 69 - - - None "Input mode" - None "INPUT ONLY pin. DO NOT set to Output Mode!" 
+      P201 68 - - - - "Input mode" - None - 
+      P202 54 SCI2_SCK2 SCI2_SCK2 High - "Peripheral Mode" CMOS None - 
+      P203 53 GPIO GPIO21 - None "Input mode" - None - 
+      P204 52 CAP_TOUCH_SENSING_UNIT_TS00 Cap_Touch_Sensing_Unit_TS00 Low - "Peripheral Mode" CMOS None - 
+      P205 51 CAP_TOUCH_SENSING_UNIT_TSCAP Cap_Touch_Sensing_Unit_TSCAP Low - "Peripheral Mode" CMOS None - 
+      P206 50 CAP_TOUCH_SENSING_UNIT_TS01 Cap_Touch_Sensing_Unit_TS01 Low - "Peripheral Mode" CMOS None - 
+      P207 49 CAP_TOUCH_SENSING_UNIT_TS02 Cap_Touch_Sensing_Unit_TS02 Low - "Peripheral Mode" CMOS None - 
+      P212 24 - - - None "Input mode" - None - 
+      P213 23 - - - None "Input mode" - None - 
+      P300 88 JTAG_TCK JTAG_TCK Low - "Peripheral Mode" CMOS None - 
+      P301 87 SCI2_RXD2_SCL2_MISO2 SCI2_RXD2_SCL2_MISO2 Medium - "Peripheral Mode" CMOS None - 
+      P302 86 SCI2_TXD2_SDA2_MOSI2 SCI2_TXD2_SDA2_MOSI2 Medium - "Peripheral Mode" CMOS None - 
+      P303 85 GPIO GPIO39 - - "Input mode" - None - 
+      P304 82 SCI6_RXD6_SCL6_MISO6 SCI6_RXD6_SCL6_MISO6 Medium - "Peripheral Mode" CMOS None - 
+      P305 81 SCI6_TXD6_SDA6_MOSI6 SCI6_TXD6_SDA6_MOSI6 Medium - "Peripheral Mode" CMOS None - 
+      P306 80 SCI6_SCK6 SCI6_SCK6 High - "Peripheral Mode" CMOS None - 
+      P307 79 GPIO GPIO36 Medium - "Output mode" CMOS - - 
+      P308 78 GPIO GPIO35 - - "Input mode" - None - 
+      P309 77 GPIO GPIO34 Medium - "Output mode" CMOS - - 
+      P310 76 GPIO GPIO33 - - "Input mode" - None - 
+      P311 75 GPIO GPIO32 - - "Input mode" - None - 
+      P312 74 GPIO GPIO31 - - "Input mode" - None - 
+      P313 55 GLCD_CONTROLLER__PIN_OPTION_B_LCD_TCON2_B GLCD_Controller__Pin_Option_B_LCD_TCON2_B Medium - "Peripheral Mode" CMOS None - 
+      P314 56 GLCD_CONTROLLER__PIN_OPTION_B_LCD_TCON1_B GLCD_Controller__Pin_Option_B_LCD_TCON1_B Medium - "Peripheral Mode" CMOS None - 
+      P315 57 GLCD_CONTROLLER__PIN_OPTION_B_LCD_TCON0_B GLCD_Controller__Pin_Option_B_LCD_TCON0_B Medium - "Peripheral Mode" CMOS None - 
+      P400 1 GPIO GPIO10 - IRQ0 "Input mode" - None - 
+      P401 2 CAN0_CTX0 CAN0_CTX0 - - "Peripheral Mode" CMOS None - 
+      P402 3 CAN0_CRX0 CAN0_CRX0 Low - "Peripheral Mode" CMOS None "In order to use this pin for AGT (AGTIO0 / AGTIO1) or RTC (RTCIC0) simply configure the pin as general purpose input." 
+      P403 4 ETHERNET_CONTROLLER_1_RMII_ET1_MDC Ethernet_Controller_1_RMII_ET1_MDC Medium - "Peripheral Mode" CMOS None "In order to use this pin for AGT (AGTIO0 / AGTIO1) or RTC (RTCIC1) simply configure the pin as general purpose input." 
+      P404 5 ETHERNET_CONTROLLER_1_RMII_ET1_MDIO Ethernet_Controller_1_RMII_ET1_MDIO Medium - "Peripheral Mode" CMOS None "In order to use this pin for RTC (RTCIC2) simply configure the pin as general purpose input." 
+      P405 6 ETHERNET_CONTROLLER_1_RMII_RMII1_TXD_EN Ethernet_Controller_1_RMII_RMII1_TXD_EN High - "Peripheral Mode" CMOS None - 
+      P406 7 ETHERNET_CONTROLLER_1_RMII_RMII1_TXD1 Ethernet_Controller_1_RMII_RMII1_TXD1 High - "Peripheral Mode" CMOS None - 
+      P407 44 USB_FULL_SPEED_USB0_VBUS USB_Full_Speed_USB0_VBUS Low - "Peripheral Mode" CMOS None - 
+      P408 43 CAP_TOUCH_SENSING_UNIT_TS04 Cap_Touch_Sensing_Unit_TS04 Low - "Peripheral Mode" CMOS None - 
+      P409 42 CAP_TOUCH_SENSING_UNIT_TS05 Cap_Touch_Sensing_Unit_TS05 Low - "Peripheral Mode" CMOS None - 
+      P410 41 SCI0_RXD0_SCL0_MISO0 SCI0_RXD0_SCL0_MISO0 Medium - "Peripheral Mode" CMOS None - 
+      P411 40 SCI0_TXD0_SDA0_MOSI0 SCI0_TXD0_SDA0_MOSI0 Medium - "Peripheral Mode" CMOS None - 
+      P412 39 SCI0_SCK0 SCI0_SCK0 High - "Peripheral Mode" CMOS None - 
+      P413 38 GPIO GPIO15 Medium - "Output mode" CMOS - - 
+      P414 37 CAP_TOUCH_SENSING_UNIT_TS10 Cap_Touch_Sensing_Unit_TS10 Low - "Peripheral Mode" CMOS None - 
+      P415 36 CAP_TOUCH_SENSING_UNIT_TS11 Cap_Touch_Sensing_Unit_TS11 Low - "Peripheral Mode" CMOS None - 
+      P500 140 QUAD_SPI_QSPCLK Quad_SPI_QSPCLK High - "Peripheral Mode" CMOS None - 
+      P501 141 QUAD_SPI_QSSL Quad_SPI_QSSL High - "Peripheral Mode" CMOS None - 
+      P502 142 QUAD_SPI_QIO0 Quad_SPI_QIO0 High - "Peripheral Mode" CMOS None - 
+      P503 143 QUAD_SPI_QIO1 Quad_SPI_QIO1 High - "Peripheral Mode" CMOS None - 
+      P504 144 QUAD_SPI_QIO2 Quad_SPI_QIO2 High - "Peripheral Mode" CMOS None - 
+      P505 145 QUAD_SPI_QIO3 Quad_SPI_QIO3 High - "Peripheral Mode" CMOS None - 
+      P506 146 GPIO GPIO16 - None "Input mode" - None - 
+      P507 147 GPIO GPIO17 - - "Input mode" - None - 
+      P511 176 - - - None "Input mode" - None - 
+      P512 175 - - - None "Input mode" - None - 
+      P513 174 - - - - "Input mode" - None - 
+      P600 122 GPIO GPIO11 Medium - "Output mode" CMOS - - 
+      P601 121 GPIO GPIO9 Medium - "Output mode" CMOS - - 
+      P602 120 GPIO GPIO8 Medium - "Output mode" CMOS - - 
+      P603 119 GPIO GPIO3 - - "Input mode" - None - 
+      P604 118 GPIO GPIO2 - - "Input mode" - None - 
+      P605 117 GPIO GPIO1 - - "Input mode" - None - 
+      P606 116 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA03_B GLCD_Controller__Pin_Option_B_LCD_DATA03_B Medium - "Peripheral Mode" CMOS None - 
+      P607 115 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA04_B GLCD_Controller__Pin_Option_B_LCD_DATA04_B Medium - "Peripheral Mode" CMOS None - 
+      P608 99 GPIO GPIO7 - - "Input mode" - None - 
+      P609 100 - - - - "Input mode" - None - 
+      P610 101 - - - - "Input mode" - None - 
+      P611 102 - - - - "Input mode" - None - 
+      P612 103 - - - - "Input mode" - None - 
+      P613 104 GPIO GPIO37 - - "Input mode" - None - 
+      P614 105 GPIO GPIO38 - - "Input mode" - None - 
+      P615 106 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA10_B GLCD_Controller__Pin_Option_B_LCD_DATA10_B Medium - "Peripheral Mode" CMOS None - 
+      P700 8 ETHERNET_CONTROLLER_1_RMII_RMII1_TXD0 Ethernet_Controller_1_RMII_RMII1_TXD0 High - "Peripheral Mode" CMOS None - 
+      P701 9 ETHERNET_CONTROLLER_1_RMII_REF50CK1 Ethernet_Controller_1_RMII_REF50CK1 High - "Peripheral Mode" CMOS None - 
+      P702 10 ETHERNET_CONTROLLER_1_RMII_RMII1_RXD0 Ethernet_Controller_1_RMII_RMII1_RXD0 High - "Peripheral Mode" CMOS None - 
+      P703 11 ETHERNET_CONTROLLER_1_RMII_RMII1_RXD1 Ethernet_Controller_1_RMII_RMII1_RXD1 High - "Peripheral Mode" CMOS None - 
+      P704 12 ETHERNET_CONTROLLER_1_RMII_RMII1_RX_ER Ethernet_Controller_1_RMII_RMII1_RX_ER High - "Peripheral Mode" CMOS None - 
+      P705 13 ETHERNET_CONTROLLER_1_RMII_RMII1_CRS_DV Ethernet_Controller_1_RMII_RMII1_CRS_DV High - "Peripheral Mode" CMOS None - 
+      P706 14 SCI3_RXD3_SCL3_MISO3 SCI3_RXD3_SCL3_MISO3 Medium - "Peripheral Mode" CMOS None - 
+      P707 15 SCI3_TXD3_SDA3_MOSI3 SCI3_TXD3_SDA3_MOSI3 Medium - "Peripheral Mode" CMOS None - 
+      P800 133 GPIO GPIO13 Medium - "Output mode" CMOS - - 
+      P801 134 GPIO GPIO14 Medium - "Output mode" CMOS - - 
+      P802 135 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA02_B GLCD_Controller__Pin_Option_B_LCD_DATA02_B Medium - "Peripheral Mode" CMOS None - 
+      P803 136 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA01_B GLCD_Controller__Pin_Option_B_LCD_DATA01_B Medium - "Peripheral Mode" CMOS None - 
+      P804 137 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA00_B GLCD_Controller__Pin_Option_B_LCD_DATA00_B Medium - "Peripheral Mode" CMOS None - 
+      P805 173 - - - - "Input mode" - None - 
+      P806 172 GPIO GPIO30 Medium - "Output mode" CMOS - - 
+      P900 58 GLCD_CONTROLLER__PIN_OPTION_B_LCD_CLK_B GLCD_Controller__Pin_Option_B_LCD_CLK_B High - "Peripheral Mode" CMOS None - 
+      P901 59 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA15_B GLCD_Controller__Pin_Option_B_LCD_DATA15_B Medium - "Peripheral Mode" CMOS None - 
+      P905 73 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA11_B GLCD_Controller__Pin_Option_B_LCD_DATA11_B Medium - "Peripheral Mode" CMOS None - 
+      P906 72 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA12_B GLCD_Controller__Pin_Option_B_LCD_DATA12_B Medium - "Peripheral Mode" CMOS None - 
+      P907 71 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA13_B GLCD_Controller__Pin_Option_B_LCD_DATA13_B Medium - "Peripheral Mode" CMOS None - 
+      P908 70 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA14_B GLCD_Controller__Pin_Option_B_LCD_DATA14_B Medium - "Peripheral Mode" CMOS None - 
+      PA00 114 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA05_B GLCD_Controller__Pin_Option_B_LCD_DATA05_B Medium - "Peripheral Mode" CMOS None - 
+      PA01 113 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA06_B GLCD_Controller__Pin_Option_B_LCD_DATA06_B Medium - "Peripheral Mode" CMOS None - 
+      PA08 107 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA09_B GLCD_Controller__Pin_Option_B_LCD_DATA09_B Medium - "Peripheral Mode" CMOS None - 
+      PA09 108 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA08_B GLCD_Controller__Pin_Option_B_LCD_DATA08_B Medium - "Peripheral Mode" CMOS None - 
+      PA10 109 GLCD_CONTROLLER__PIN_OPTION_B_LCD_DATA07_B GLCD_Controller__Pin_Option_B_LCD_DATA07_B Medium - "Peripheral Mode" CMOS None - 
+      PB00 16 USB_HIGH_SPEED_USBHS_VBUSEN USB_High_Speed_USBHS_VBUSEN Low - "Peripheral Mode" CMOS None - 
+      PB01 17 USB_HIGH_SPEED_USBHS_VBUS USB_High_Speed_USBHS_VBUS Low - "Peripheral Mode" CMOS None - 
+      PVSS_USBHS 29 - - - - - - - - 
+      RES 67 - - - - - - - - 
+      USBHS_DM 31 - - - - - - - - 
+      USBHS_DP 32 - - - - - - - - 
+      USBHS_RREF 27 - - - - - - - - 
+      USB_DM 46 - - - - - - - - 
+      USB_DP 47 - - - - - - - - 
+      VBATT 18 - - - - - - - - 
+      VCC 110 - - - - - - - - 
+      VCC 123 - - - - - - - - 
+      VCC 25 - - - - - - - - 
+      VCC 138 - - - - - - - - 
+      VCC 149 - - - - - - - - 
+      VCC 61 - - - - - - - - 
+      VCC 171 - - - - - - - - 
+      VCC 84 - - - - - - - - 
+      VCC 97 - - - - - - - - 
+      VCC_DCDC 66 - - - - - - - - 
+      VCC_USB 48 - - - - - - - - 
+      VCC_USBHS 34 - - - - - - - - 
+      VCL0 19 - - - - - - - - 
+      VCL1 62 - - - - - - - - 
+      VCL2 148 - - - - - - - - 
+      VCL_F 112 - - - - - - - - 
+      VLO 64 - - - - - - - - 
+      VLO 65 - - - - - - - - 
+      VREFH 154 - - - - - - - - 
+      VREFH0 158 - - - - - - - - 
+      VREFL 153 - - - - - - - - 
+      VREFL0 157 - - - - - - - - 
+      VSS 22 - - - - - - - - 
+      VSS 111 - - - - - - - - 
+      VSS 35 - - - - - - - - 
+      VSS 124 - - - - - - - - 
+      VSS 139 - - - - - - - - 
+      VSS 60 - - - - - - - - 
+      VSS 170 - - - - - - - - 
+      VSS 83 - - - - - - - - 
+      VSS 150 - - - - - - - - 
+      VSS 63 - - - - - - - - 
+      VSS 98 - - - - - - - - 
+      VSS1_USBHS 33 - - - - - - - - 
+      VSS2_USBHS 30 - - - - - - - - 
+      VSS_USB 45 - - - - - - - - 
+      XCIN 20 - - - - - - - - 
+      XCOUT 21 - - - - - - - - 
+      
+  Module "CGC Driver on r_cgc"
+    Parameter Checking: Default (BSP)
+    Main Oscillator Wait Time: 8163 cycles
+    Main Oscillator Clock Source: Crystal or Resonator
+    Oscillator Stop Detect: Enabled
+    Subclock Drive: Standard (12.5pf)
+    
+  Module "ELC Driver on r_elc"
+    Parameter Checking: Default (BSP)
+    
+  Module "I/O Port Driver on r_ioport"
+    Parameter Checking: Default (BSP)
+    
+  Module "External IRQ Framework on sf_external_irq"
+    Parameter Checking: Default (BSP)
+    
+  Module "External IRQ Driver on r_icu"
+    Parameter Checking: Default (BSP)
+    
+  HAL
+    Instance "g_cgc CGC Driver on r_cgc"
+      Name [Fixed]: g_cgc
+      
+    Instance "g_elc ELC Driver on r_elc"
+      Name [Fixed]: g_elc
+      
+    Instance "g_ioport I/O Port Driver on r_ioport"
+      Name [Fixed]: g_ioport
+      
+  Thread "Blinky Thread"
+    Symbol: blinky_thread
+    Name: Blinky Thread
+    Stack size (bytes): 1024
+    Priority: 1
+    Auto start: Enabled
+    Time slicing interval (ticks): 1
+    
+    Instance "g_sf_external_irq External IRQ Framework on sf_external_irq"
+      Name: g_sf_external_irq
+      Event: Semaphore Put
+      Lower Level Name: g_external_irq
+      
+    Instance "g_external_irq External IRQ Driver on r_icu"
+      Name: g_external_irq
+      Channel: 10
+      Trigger: Both Edges
+      Digital Filtering: Disabled
+      Digital Filtering Sample Clock (Only valid when Digital Filtering is Enabled): PCLK / 64
+      Interrupt enabled after initialization: True
+      Callback: g_external_irq10_callback
+      
+    Instance "g_external_irq_11 External IRQ Driver on r_icu"
+      Name: g_external_irq_11
+      Channel: 11
+      Trigger: Both Edges
+      Digital Filtering: Disabled
+      Digital Filtering Sample Clock (Only valid when Digital Filtering is Enabled): PCLK / 64
+      Interrupt enabled after initialization: True
+      Callback: g_external_irq11_callback
+      
+  Messaging

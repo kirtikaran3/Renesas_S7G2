@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux" path="ssp_cfg/framework/el/ux_user.h" version="0">
+        <content>
+#if (${interface.framework.ux_src})
+#include "ux_src_user.h"
+#endif
+        </content>
+    </config>
+	<module config="config.el.ux" display="Framework|USB|${module.el.ux.name} USBX on ux" id="module.el.ux" version="1">
+        <constraint display="Requires one USBX Port HS and FS Framework instance named ${module.el.ux.lowerlevelname}">
+            "${interface.framework.sf_el_ux.${module.el.ux.lowerlevelname}}" === "1"
+        </constraint>
+        <requires interface="interface.framework.sf_el_ux.${module.el.ux.lowerlevelname}" />
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux" />
+        <provides interface="interface.el.ux.${module.el.ux.name}" />
+        <property default="g_ux" display="Name" id="module.el.ux.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux.name}")</constraint>
+        </property>
+        <property id="module.el.ux.lowerlevelname" display="Lower Level Name" default="g_sf_el_ux">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux.lowerlevelname}")</constraint>
+        </property>
+	</module>
+</synergyModuleDescription>

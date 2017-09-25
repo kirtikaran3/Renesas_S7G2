@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <module config="config.el.ux_device_class_hid_src" display="X-Ware|USBX|Device|Classes|HID|USBX Device Class HID Source" common="1" id="module.el.ux_device_class_hid_src" version="0">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_device_class_hid_src" />
+    </module>
+</synergyModuleDescription>

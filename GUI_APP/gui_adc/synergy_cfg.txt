@@ -1,0 +1,489 @@
+Synergy Configuration
+  Board "S7G2 SK"
+    Part package: FC (LQFP/176)
+    Part memory size: H (4MB/640KB/64KB)
+    Core and Frequency: CM4, 240MHz
+    Part series: High-performance (201MHz-300MHz)
+    Main stack size (bytes): 0x1000
+    Process stack size (bytes): 0
+    Heap size (bytes) - A minimum of 4K (0x1000) is required if standard library functions are to be used.: 0x1000
+    OFS0 register settings: Select fields below
+         IWDT Start Mode: IWDT is Disabled
+         IWDT Timeout Period: 2048 cycles
+         IWDT Dedicated Clock Frequency Divisor: 128
+         IWDT Window End Position:  0% (no window end position)
+         IWDT Window Start Position: 100% (no window start position)
+         IWDT Reset Interrupt Request Select: Reset is enabled
+         IWDT Stop Control: Stop counting when in Sleep, Snooze mode, Software Standby, or Deep Software Standby mode
+         WDT Start Mode Select: Stop WDT after a reset (register-start mode)
+         WDT Timeout Period: 16384 cycles
+         WDT Clock Frequency Division Ratio: 128
+         WDT Window End Position:  0% (no window end position)
+         WDT Window Start Position: 100% (no window start position)
+         WDT Reset Interrupt Request: Reset
+         WDT Stop Control: Stop counting when entering Sleep mode
+    OFS1 register settings: Select fields below
+         Voltage Detection 0 Circuit Start: Voltage monitor 0 reset is disabled after reset
+         Voltage Detection 0 Level: 2.80 V
+         HOCO OScillation Enable: HOCO oscillation is disabled after reset
+    ID code 1: 0xFFFFFFFF
+    ID code 2: 0xFFFFFFFF
+    ID code 3: 0xFFFFFFFF
+    ID code 4: 0xFFFFFFFF
+    MCU Vcc (mV): 3300
+    Parameter checking: Enabled
+    RTOS being used: ThreadX
+    Assert Failures: Return SSP_ERR_ASSERTION
+    Error Log: No Error Log
+    
+  R7FS7G27H3A01CFC
+    part_number: R7FS7G27H3A01CFC
+    rom_size_bytes: 4194304
+    ram_size_bytes: 655360
+    data_flash_size_bytes: 65536
+    package_style: LQFP
+    package_pins: 176
+    
+  S7G2
+    series: 7
+    
+  S7G2 Family
+    OFS0 register settings: Select fields below
+         IWDT Start Mode: IWDT is Disabled
+         IWDT Timeout Period: 2048 cycles
+         IWDT Dedicated Clock Frequency Divisor: 128
+         IWDT Window End Position:  0% (no window end position)
+         IWDT Window Start Position: 100% (no window start position)
+         IWDT Reset Interrupt Request Select: Reset is enabled
+         IWDT Stop Control: Stop counting when in Sleep, Snooze mode, Software Standby, or Deep Software Standby mode
+         WDT Start Mode Select: Stop WDT after a reset (register-start mode)
+         WDT Timeout Period: 16384 cycles
+         WDT Clock Frequency Division Ratio: 128
+         WDT Window End Position:  0% (no window end position)
+         WDT Window Start Position: 100% (no window start position)
+         WDT Reset Interrupt Request: Reset
+         WDT Stop Control: Stop counting when entering Sleep mode
+    OFS1 register settings: Select fields below
+         Voltage Detection 0 Circuit Start: Voltage monitor 0 reset is disabled after reset
+         Voltage Detection 0 Level: 2.80 V
+         HOCO OScillation Enable: HOCO oscillation is disabled after reset
+    
+  Synergy Common
+    Main stack size (bytes): 0x1000
+    Process stack size (bytes): 0
+    Heap size (bytes) - A minimum of 4K (0x1000) is required if standard library functions are to be used.: 0x1000
+    MCU Vcc (mV): 3300
+    Parameter checking: Enabled
+    Assert Failures: Return SSP_ERR_ASSERTION
+    Error Log: No Error Log
+    ID code 1: 0xFFFFFFFF
+    ID code 2: 0xFFFFFFFF
+    ID code 3: 0xFFFFFFFF
+    ID code 4: 0xFFFFFFFF
+    
+  Clocks
+    XTAL 24000000Hz
+    PLL Src: XTAL
+    HOCO 20MHz
+    PLL Div /2
+    PLL Mul x20.0
+    Clock Src: PLL
+    ICLK Div /1
+    PCLKA Div /2
+    PCLKB Div /4
+    PCLKC Div /4
+    PCLKD Div /2
+    SDCLKout On
+    BCLK Div /2
+    BCK/2
+    UCLK Div /5
+    FCLK Div /4
+    
+  Pin Configurations
+    S7G2-SK.pincfg -> g_bsp_pin_cfg
+  Module "ELC Driver on r_elc"
+    Parameter Checking: Default (BSP)
+    
+  Module "I/O Port Driver on r_ioport"
+    Parameter Checking: Default (BSP)
+    
+  Module "FMI Driver on r_fmi"
+    Parameter Checking: Default (BSP)
+    
+  Module "CGC Driver on r_cgc"
+    Parameter Checking: Default (BSP)
+    Main Oscillator Wait Time: 8163 cycles
+    Main Oscillator Clock Source: Crystal or Resonator
+    Oscillator Stop Detect: Enabled
+    Subclock Drive: Standard (12.5pf)
+    
+  Module "SPI Driver on r_sci_spi"
+    Parameter Checking: Default (BSP)
+    
+  Module "GUIX on gx"
+    Enable Synergy 2D Drawing Engine Support: Yes
+    Enable Synergy JPEG Support: Yes
+    
+  Module "ADC Driver on r_adc"
+    Parameter Checking: Enabled
+    
+  HAL
+    Instance "g_elc ELC Driver on r_elc"
+      Name [Fixed]: g_elc
+      
+    Instance "g_ioport I/O Port Driver on r_ioport"
+      Name [Fixed]: g_ioport
+      
+    Instance "g_fmi FMI Driver on r_fmi"
+      Name: g_fmi
+      
+    Instance "g_cgc CGC Driver on r_cgc"
+      Name [Fixed]: g_cgc
+      
+  Thread "New Thread"
+    Symbol: main_thread
+    Name: New Thread
+    Stack size (bytes): 1024
+    Priority: 1
+    Auto start: Enabled
+    Time slicing interval (ticks): 1
+    
+    Instance "g_spi_lcdc SPI Driver on r_sci_spi"
+      Name: g_spi_lcdc
+      Channel: 0
+      Operating Mode: Master
+      Clock Phase: Data sampling on odd edge, data variation on even edge
+      Clock Polarity: Low when idle
+      Mode Fault Error: Disable
+      Bit Order: MSB First
+      Bitrate: 100000
+      Callback: g_lcd_spi_callback
+      
+      Instance "SCI Common"
+      Instance "g_transfer0 Transfer Driver on r_dtc Event SCI0 TXI"
+        Name: g_transfer0
+        Mode: Normal
+        Transfer Size: 1 Byte
+        Destination Address Mode: Fixed
+        Source Address Mode: Incremented
+        Repeat Area (Unused in Normal Mode): Source
+        Interrupt Frequency: After all transfers have completed
+        Destination Pointer: NULL
+        Source Pointer: NULL
+        Number of Transfers: 0
+        Number of Blocks (Valid only in Block Mode): 0
+        Activation Source (Must enable IRQ): Event SCI0 TXI
+        Auto Enable: False
+        Callback (Only valid with Software start): NULL
+        
+      Instance "g_transfer1 Transfer Driver on r_dtc Event SCI0 RXI"
+        Name: g_transfer1
+        Mode: Normal
+        Transfer Size: 1 Byte
+        Destination Address Mode: Incremented
+        Source Address Mode: Fixed
+        Repeat Area (Unused in Normal Mode): Destination
+        Interrupt Frequency: After all transfers have completed
+        Destination Pointer: NULL
+        Source Pointer: NULL
+        Number of Transfers: 0
+        Number of Blocks (Valid only in Block Mode): 0
+        Activation Source (Must enable IRQ): Event SCI0 RXI
+        Auto Enable: False
+        Callback (Only valid with Software start): NULL
+        
+    Instance "GUIX on gx"
+      Instance "g_sf_el_gx GUIX Port on sf_el_gx"
+        Name: g_sf_el_gx
+        Name of Display Driver Run-time Configuration (Must be a valid symbol): g_display_runtime_cfg_bg
+        Name of Frame Buffer A (Must be a valid symbol): g_display_fb_background[0]
+        Name of Frame Buffer B (NULL allowed if consisting a single frame buffer system): g_display_fb_background[1]
+        Name of User Callback function: NULL
+        Screen Rotation Angle(Clockwise): 0
+        GUIX Canvas Buffer (required if rotation angle is not zero): Not used
+        Size of JPEG Work Buffer (valid if JPEG hardware acceleration enabled): 81920
+        Memory section for GUIX Canvas Buffer: bss
+        Memory section for JPEG Work Buffer: bss
+        
+        Instance "g_display Display Driver on r_glcd"
+          Name: g_display
+          Name of display callback function to be defined by user: NULL
+          Input - Panel clock source select: Internal clock(GLCDCLK)
+          Input - Graphics screen1: Used
+          Input - Graphics screen1 frame buffer name: fb_background
+          Input - Number of Graphics screen1 frame buffer: 2
+          Input - Section where Graphics screen1 frame buffer allocated: bss
+          Input - Graphics screen1 input horizontal size: 256
+          Input - Graphics screen1 input vertical size: 320
+          Input - Graphics screen1 input horizontal stride(not bytes but pixels): 256
+          Input - Graphics screen1 input format: 16bits RGB565
+          Input - Graphics screen1 input line descending: Not used
+          Input - Graphics screen1 input lines repeat: Off
+          Input - Graphics screen1 input lines repeat times: 0
+          Input - Graphics screen1 layer coordinate X: 0
+          Input - Graphics screen1 layer coordinate Y: 0
+          Input - Graphics screen1 layer background color alpha: 255
+          Input - Graphics screen1 layer background color Red: 255
+          Input - Graphics screen1 layer background color Green: 255
+          Input - Graphics screen1 layer background color Blue: 255
+          Input - Graphics screen1 layer fading control: None
+          Input - Graphics screen1 layer fade speed: 0
+          Input - Graphics screen2: Not used
+          Input - Graphics screen2 frame buffer name: fb_foreground
+          Input - Number of Graphics screen2 frame buffer: 2
+          Input - Section where Graphics screen2 frame buffer allocated: bss
+          Input - Graphics screen2 input horizontal size: 256
+          Input - Graphics screen2 input vertical size: 320
+          Input - Graphics screen2 input horizontal stride(not bytes but pixels): 256
+          Input - Graphics screen2 input format: 16bits RGB565
+          Input - Graphics screen2 line descending: Off
+          Input - Graphics screen2 input lines repeat: Off
+          Input - Graphics screen2 input lines repeat times: 0
+          Input - Graphics screen2 layer coordinate X: 0
+          Input - Graphics screen2 layer coordinate Y: 0
+          Input - Graphics screen2 layer background color alpha: 255
+          Input - Graphics screen2 layer background color Red: 255
+          Input - Graphics screen2 layer background color Green: 255
+          Input - Graphics screen2 layer background color Blue: 255
+          Input - Graphics screen2 layer fading control: None
+          Input - Graphics screen2 layer fade speed: 0
+          Output - Horizontal total cycles: 320
+          Output - Horizontal active video cycles: 240
+          Output - Horizontal back porch cycles: 6
+          Output - Horizontal sync signal cycles: 4
+          Output - Horizontal sync signal polarity: Low active
+          Output - Vertical total lines: 328
+          Output - Vertical active video lines: 320
+          Output - Vertical back porch lines: 4
+          Output - Vertical sync signal lines: 4
+          Output - Vertical sync signal polarity: Low active
+          Output - Format: 16bits RGB565
+          Output - Endian: Little endian
+          Output - Color order: RGB
+          Output - Data Enable Signal Polarity: High active
+          Output - Sync edge: Rising edge
+          Output - Background color alpha channel: 255
+          Output - Background color R channel: 0
+          Output - Background color G channel: 0
+          Output - Background color B channel: 0
+          CLUT: Not used
+          CLUT - CLUT buffer size: 256
+          TCON - Hsync pin select: LCD_TCON2
+          TCON - Vsync pin select: LCD_TCON1
+          TCON - DataEnable pin select: LCD_TCON0
+          TCON - Panel clock division ratio: 1/32
+          Color correction - Brightness: Off
+          Color correction - Brightness R channel: 512
+          Color correction - Brightness G channel: 512
+          Color correction - Brightness B channel: 512
+          Color correction - Contrast: Off
+          Color correction - Contrast(gain) R channel: 128
+          Color correction - Contrast(gain) G channel: 128
+          Color correction - Contrast(gain) B channel: 128
+          Color correction - Gamma correction(Red): Off
+          Color correction - Gamma gain R[0]: 0
+          Color correction - Gamma gain R[1]: 0
+          Color correction - Gamma gain R[2]: 0
+          Color correction - Gamma gain R[3]: 0
+          Color correction - Gamma gain R[4]: 0
+          Color correction - Gamma gain R[5]: 0
+          Color correction - Gamma gain R[6]: 0
+          Color correction - Gamma gain R[7]: 0
+          Color correction - Gamma gain R[8]: 0
+          Color correction - Gamma gain R[9]: 0
+          Color correction - Gamma gain R[10]: 0
+          Color correction - Gamma gain R[11]: 0
+          Color correction - Gamma gain R[12]: 0
+          Color correction - Gamma gain R[13]: 0
+          Color correction - Gamma gain R[14]: 0
+          Color correction - Gamma gain R[15]: 0
+          Color correction - Gamma threshold R[0]: 0
+          Color correction - Gamma threshold R[1]: 0
+          Color correction - Gamma threshold R[2]: 0
+          Color correction - Gamma threshold R[3]: 0
+          Color correction - Gamma threshold R[4]: 0
+          Color correction - Gamma threshold R[5]: 0
+          Color correction - Gamma threshold R[6]: 0
+          Color correction - Gamma threshold R[7]: 0
+          Color correction - Gamma threshold R[8]: 0
+          Color correction - Gamma threshold R[9]: 0
+          Color correction - Gamma threshold R[10]: 0
+          Color correction - Gamma threshold R[11]: 0
+          Color correction - Gamma threshold R[12]: 0
+          Color correction - Gamma threshold R[13]: 0
+          Color correction - Gamma threshold R[14]: 0
+          Color correction - Gamma threshold R[15]: 0
+          Color correction - Gamma correction(Green): Off
+          Color correction - Gamma gain G[0]: 0
+          Color correction - Gamma gain G[1]: 0
+          Color correction - Gamma gain G[2]: 0
+          Color correction - Gamma gain G[3]: 0
+          Color correction - Gamma gain G[4]: 0
+          Color correction - Gamma gain G[5]: 0
+          Color correction - Gamma gain G[6]: 0
+          Color correction - Gamma gain G[7]: 0
+          Color correction - Gamma gain G[8]: 0
+          Color correction - Gamma gain G[9]: 0
+          Color correction - Gamma gain G[10]: 0
+          Color correction - Gamma gain G[11]: 0
+          Color correction - Gamma gain G[12]: 0
+          Color correction - Gamma gain G[13]: 0
+          Color correction - Gamma gain G[14]: 0
+          Color correction - Gamma gain G[15]: 0
+          Color correction - Gamma threshold G[0]: 0
+          Color correction - Gamma threshold G[1]: 0
+          Color correction - Gamma threshold G[2]: 0
+          Color correction - Gamma threshold G[3]: 0
+          Color correction - Gamma threshold G[4]: 0
+          Color correction - Gamma threshold G[5]: 0
+          Color correction - Gamma threshold G[6]: 0
+          Color correction - Gamma threshold G[7]: 0
+          Color correction - Gamma threshold G[8]: 0
+          Color correction - Gamma threshold G[9]: 0
+          Color correction - Gamma threshold G[10]: 0
+          Color correction - Gamma threshold G[11]: 0
+          Color correction - Gamma threshold G[12]: 0
+          Color correction - Gamma threshold G[13]: 0
+          Color correction - Gamma threshold G[14]: 0
+          Color correction - Gamma threshold G[15]: 0
+          Color correction - Gamma correction(Blue): Off
+          Color correction - Gamma gain B[0]: 0
+          Color correction - Gamma gain B[1]: 0
+          Color correction - Gamma gain B[2]: 0
+          Color correction - Gamma gain B[3]: 0
+          Color correction - Gamma gain B[4]: 0
+          Color correction - Gamma gain B[5]: 0
+          Color correction - Gamma gain B[6]: 0
+          Color correction - Gamma gain B[7]: 0
+          Color correction - Gamma gain B[8]: 0
+          Color correction - Gamma gain B[9]: 0
+          Color correction - Gamma gain B[10]: 0
+          Color correction - Gamma gain B[11]: 0
+          Color correction - Gamma gain B[12]: 0
+          Color correction - Gamma gain B[13]: 0
+          Color correction - Gamma gain B[14]: 0
+          Color correction - Gamma gain B[15]: 0
+          Color correction - Gamma threshold B[0]: 0
+          Color correction - Gamma threshold B[1]: 0
+          Color correction - Gamma threshold B[2]: 0
+          Color correction - Gamma threshold B[3]: 0
+          Color correction - Gamma threshold B[4]: 0
+          Color correction - Gamma threshold B[5]: 0
+          Color correction - Gamma threshold B[6]: 0
+          Color correction - Gamma threshold B[7]: 0
+          Color correction - Gamma threshold B[8]: 0
+          Color correction - Gamma threshold B[9]: 0
+          Color correction - Gamma threshold B[10]: 0
+          Color correction - Gamma threshold B[11]: 0
+          Color correction - Gamma threshold B[12]: 0
+          Color correction - Gamma threshold B[13]: 0
+          Color correction - Gamma threshold B[14]: 0
+          Color correction - Gamma threshold B[15]: 0
+          Dithering: Off
+          Dithering - Mode: Truncate
+          Dithering - Pattern A: Pattern 11
+          Dithering - Pattern B: Pattern 11
+          Dithering - Pattern C: Pattern 11
+          Dithering - Pattern D: Pattern 11
+          Misc - Correction Process Order: Brightness and Contrast then Gamma
+          
+        Instance "g_sf_jpeg_decode0 JPEG Decode Framework on sf_jpeg_decode"
+          Name: g_sf_jpeg_decode0
+          
+          Instance "g_jpeg_decode0 JPEG Decode Driver on r_jpeg"
+            Name: g_jpeg_decode0
+            Byte Order for Input Data Format: Normal byte order (1)(2)(3)(4)(5)(6)(7)(8)
+            Byte Order for Output Data Format: Normal byte order (1)(2)(3)(4)(5)(6)(7)(8)
+            Output Data Color Format: Pixel Data RGB565 format
+            Alpha value to be applied to decoded pixel data(only valid for ARGB8888 format): 255
+            Name of user callback function: NULL
+            
+        Instance "D/AVE 2D Driver on dave2d"
+          Instance "D/AVE 2D Port on sf_tes_2d_drw"
+      Instance "GUIX Source"
+    Instance "g_adc ADC Driver on r_adc"
+      Name: g_adc
+      Unit: 0
+      Resolution: 12-Bit
+      Alignment: Right
+      Clear after read: On
+      Mode: Single Scan
+      Channel Scan Mask: Select channels below
+          Channel 0: Unused
+          Channel 1: Unused
+          Channel 2: Unused
+          Channel 3: Unused
+          Channel 4: Unused
+          Channel 5: Unused
+          Channel 6: Unused
+          Channel 7 (S3A7/S124 Only): Unused
+          Channel 8 (S3A7/S124 Only): Unused
+          Channel 9 (S3A7/S124 Only): Unused
+          Channel 10 (S3A7/S124 Only): Unused
+          Channel 11 (S3A7 Only): Unused
+          Channel 12 (S3A7 Only): Unused
+          Channel 13 (S3A7 Only): Unused
+          Channel 14 (S3A7 Only): Unused
+          Channel 15 (S3A7 Only): Unused
+          Channel 16: Unused
+          Channel 17: Unused
+          Channel 18: Unused
+          Channel 19: Unused
+          Channel 20: Unused
+          Channel 21 (Unit 0 Only): Unused
+          Channel 22 (S3A7/S124 Only): Unused
+          Channel 23 (S3A7 Only): Unused
+          Channel 24 (S3A7 Only): Unused
+          Channel 25 (S3A7 Only): Unused
+          Channel 26 (S3A7 Only): Unused
+          Channel 27 (S3A7 Only): Unused
+          Temperature Sensor: Use in Normal/Group A
+          Voltage Sensor: Unused
+      Normal/Group A Trigger: Software
+      Group B Trigger (Valid only in Group Scan Mode): ELC Event (The only valid trigger for either group in Group Scan Mode)
+      Group Priority (Valid only in Group Scan Mode): Group A cannot interrupt Group B
+      Add/Average Count: Disabled
+      Addition/Averaging Mask: Select channels to perform addition/averaging below
+          Channel 0: Disabled
+          Channel 1: Disabled
+          Channel 2: Disabled
+          Channel 3: Disabled
+          Channel 4: Disabled
+          Channel 5: Disabled
+          Channel 6: Disabled
+          Channel 7: Disabled
+          Channel 8: Disabled
+          Channel 9: Disabled
+          Channel 10: Disabled
+          Channel 11: Disabled
+          Channel 12: Disabled
+          Channel 13: Disabled
+          Channel 14: Disabled
+          Channel 15: Disabled
+          Channel 16: Disabled
+          Channel 17: Disabled
+          Channel 18: Disabled
+          Channel 19: Disabled
+          Channel 20: Disabled
+          Channel 21: Disabled
+          Channel 22: Disabled
+          Channel 23: Disabled
+          Channel 24: Disabled
+          Channel 25: Disabled
+          Channel 26: Disabled
+          Channel 27: Disabled
+          Temperature Sensor: Disabled
+          Voltage Sensor: Disabled
+      Sample and Hold Mask: Select channels for which individual sample and hold circuit is to be enabled
+          Channel 0: Disabled
+          Channel 1: Disabled
+          Channel 2: Disabled
+      Sample Hold States (Applies only to the 3 channels selected above): 24
+      Callback: g_adc_callback
+      
+    Object "g_main_semaphore_lcdc Semaphore"
+      Name: New Semaphore
+      Symbol: g_main_semaphore_lcdc
+      Initial count: 0
+      
+  Messaging

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+    <config id="config.el.ux_host_class_cdc_acm_src" path="ssp_cfg/framework/el/ux_host_class_cdc_acm_src_user.h" version="0">
+        <content>
+        </content>
+    </config>
+    <module config="config.el.ux_host_class_cdc_acm_src" display="X-Ware|USBX|Host|Classes|CDC-ACM|USBX Host Class CDC-ACM Source" common="1" id="module.el.ux_host_class_cdc_acm_src" version="0">
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_host_class_cdc_acm_src" />
+    </module>
+</synergyModuleDescription>

@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<synergyModuleDescription>
+    <module display="X-Ware|NetX|Protocols|NetX BSD Support" id="module.el.nx_bsd" version="1" common="100">
+        <requires interface="_rtos" />
+        <requires id="module.el.nx_bsd.requires.nx.ip" interface="interface.el.nx.ip" display="Add NetX IP Instance" >
+            <override property="module.el.nx.ip.arp" value="module.el.nx.ip.arp.enable" />
+        </requires>
+        <requires id="module.el.nx_bsd.requires.nx.packet_pool" interface="interface.el.nx.packet_pool" display="Add NetX Packet Pool" />
+        <provides interface="interface.el.nx_bsd" />
+        <property default="2048" display="Internal thread stack size (bytes)" id="module.el.nx_bsd.stack_size">
+            <constraint display="Value must be a non-negative integer and divisible by 8">
+                testInteger("${module.el.nx_bsd.stack_size}")  &amp;&amp; (("${module.el.nx_bsd.stack_size}" % 8) == 0)
+            </constraint>
+        </property>
+        <property default="3" display="Internal thread priority" id="module.el.nx_bsd.priority">
+            <constraint display="Value must be a non-negative integer">
+                testInteger("${module.el.nx_bsd.priority}")  &amp;&amp; ("${module.el.nx_bsd.priority}" &gt;= 0)
+            </constraint>
+        </property>
+        <header>
+        </header>
+        <includes>
+            #include "nx_bsd.h"
+        </includes>
+        <macros>
+        </macros>
+        <declarations>
+            uint8_t         nx_bsd_stack_memory[${module.el.nx_bsd.stack_size}];
+        </declarations>
+        <init>
+            INT nx_bsd_err;
+            /* Initialize BSD Support for NetX. */
+            nx_bsd_err = bsd_initialize(&amp;${module.el.nx_bsd.requires.nx.ip::module.el.nx.ip.name},
+                                        &amp;${module.el.nx_bsd.requires.nx.packet_pool::module.el.nx.packet_pool.name},
+                                        &amp;nx_bsd_stack_memory[0],
+                                        ${module.el.nx_bsd.stack_size},
+                                        ${module.el.nx_bsd.priority});
+            if (NX_SUCCESS != nx_bsd_err)
+            {
+                BSP_CFG_HANDLE_UNRECOVERABLE_ERROR(0);
+            }
+        </init>
+    </module>
+</synergyModuleDescription>

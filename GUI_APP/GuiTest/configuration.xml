@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<synergyConfiguration>
+  <synergyComponentSelection>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_ioport" variant="" vendor="Renesas" version="1.1.1">
+      <description>I/O Port: Provides=[IO Port]</description>
+      <originalPack>Renesas.Synergy.1.1.1.pack</originalPack>
+    </component>
+    <component apiversion="" class="Projects" condition="" group="all" subgroup="BlinkyThreadX" variant="" vendor="Renesas" version="1.1.0">
+      <description>Simple application that blinks an LED. ThreadX RTOS included</description>
+      <originalPack>Renesas.SynergyBlinkyThreadX.1.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_elc" variant="" vendor="Renesas" version="1.1.0">
+      <description>Event Link Controller: Provides=[ELC]</description>
+      <originalPack>Renesas.Synergy.1.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="Express Logic" condition="" group="all" subgroup="tx" variant="" vendor="Renesas" version="1.1.0">
+      <description>Express Logic ThreadX: Provides=[ThreadX]</description>
+      <originalPack>Renesas.Synergy.1.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="Common" condition="" group="all" subgroup="ssp_common" variant="" vendor="Renesas" version="1.1.3">
+      <description>SSP Common Code</description>
+      <originalPack>Renesas.Synergy.1.1.3.pack</originalPack>
+    </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_cgc" variant="" vendor="Renesas" version="1.1.3">
+      <description>Clock Generation Circuit: Provides=[CGC]</description>
+      <originalPack>Renesas.Synergy.1.1.3.pack</originalPack>
+    </component>
+    <component apiversion="" class="BSP" condition="" group="BSP" subgroup="s7g2_sk" variant="" vendor="Renesas" version="1.1.3">
+      <description>Board Support Package for S7G2_SK</description>
+      <originalPack>Renesas.Synergy.1.1.3.pack</originalPack>
+    </component>
+  </synergyComponentSelection>
+  <generalSettings>
+    <option key="#pinconfiguration#" value="S7G2-SK_BlinkyThreadX.pincfg"/>
+    <option key="#Board#" value="board.s7g2_sk"/>
+    <option key="CPU" value="S7G2"/>
+    <option key="#TargetName#" value="R7FS7G27H3A01CFC"/>
+    <option key="#RTOS#" value="Express Logic ThreadX"/>
+  <option key="#TargetARCHITECTURE#" value="cortex-m4"/>
+    <option key="#SSPVersion#" value="1.1.3"/>
+    <option key="#DefaultLinkerScript#" value="S7G2.ld"/>
+  </generalSettings>
+  <synergyBspConfiguration>
+    <config id="config.board.s7g2_sk">
+      <property id="config.board.common.rtos" value="config.board.common.rtos.tx"/>
+    </config>
+  </synergyBspConfiguration>
+  <synergyModuleConfiguration>
+    <context id="_hal.0">
+      <module id="module.driver.cgc_on_cgc.0"/>
+      <module id="module.driver.elc_on_elc.0"/>
+      <module id="module.driver.ioport_on_ioport.0"/>
+    </context>
+    <context id="rtos.threadx.thread.0">
+      <property id="_symbol" value="blinky_thread"/>
+      <property id="rtos.threadx.thread.name" value="Blinky Thread"/>
+      <property id="rtos.threadx.thread.stack" value="1024"/>
+      <property id="rtos.threadx.thread.priority" value="1"/>
+      <property id="rtos.threadx.thread.autostart" value="rtos.threadx.thread.autostart.enabled"/>
+      <property id="rtos.threadx.thread.timeslice" value="1"/>
+    </context>
+  </synergyModuleConfiguration>
+</synergyConfiguration>

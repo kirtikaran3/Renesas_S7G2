@@ -1,0 +1,53 @@
+04:08:51 **** Incremental Build of configuration Debug for project GUIAppADC ****
+make -j4 all 
+'Building file: ../src/gui/guiapp_resources.c'
+'Building file: ../src/gui/guiapp_specifications.c'
+'Building file: ../src/guiapp_event_handlers.c'
+'Invoking: Cross ARM C Compiler'
+C:\Renesas\e2_studio\eclipse\../Utilities/isdebuild arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op -Waggregate-return -Wfloat-equal  -g3 -D_RENESAS_SYNERGY_ -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\driver" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp\cmsis\Include" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src\synergy_gen" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\tes" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\src\framework\el\tx" -std=c99 -MMD -MP -MF"src/gui/guiapp_resources.d" -MT"src/gui/guiapp_resources.o" -c -o "src/gui/guiapp_resources.o" -x c "../src/gui/guiapp_resources.c"
+'Invoking: Cross ARM C Compiler'
+C:\Renesas\e2_studio\eclipse\../Utilities/isdebuild arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op -Waggregate-return -Wfloat-equal  -g3 -D_RENESAS_SYNERGY_ -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\driver" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp\cmsis\Include" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src\synergy_gen" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\tes" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\src\framework\el\tx" -std=c99 -MMD -MP -MF"src/guiapp_event_handlers.d" -MT"src/guiapp_event_handlers.o" -c -o "src/guiapp_event_handlers.o" -x c "../src/guiapp_event_handlers.c"
+'Invoking: Cross ARM C Compiler'
+C:\Renesas\e2_studio\eclipse\../Utilities/isdebuild arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op -Waggregate-return -Wfloat-equal  -g3 -D_RENESAS_SYNERGY_ -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\driver" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp\cmsis\Include" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src\synergy_gen" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\tes" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\src\framework\el\tx" -std=c99 -MMD -MP -MF"src/gui/guiapp_specifications.d" -MT"src/gui/guiapp_specifications.o" -c -o "src/gui/guiapp_specifications.o" -x c "../src/gui/guiapp_specifications.c"
+'Building file: ../src/main_thread_entry.c'
+'Invoking: Cross ARM C Compiler'
+C:\Renesas\e2_studio\eclipse\../Utilities/isdebuild arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op -Waggregate-return -Wfloat-equal  -g3 -D_RENESAS_SYNERGY_ -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\driver" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\bsp\cmsis\Include" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\driver\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\src\synergy_gen" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\api" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\instances" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\tes" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy_cfg\ssp_cfg\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\el" -I"C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\src\framework\el\tx" -std=c99 -MMD -MP -MF"src/main_thread_entry.d" -MT"src/main_thread_entry.o" -c -o "src/main_thread_entry.o" -x c "../src/main_thread_entry.c"
+'Finished building: ../src/gui/guiapp_specifications.c'
+' '
+In file included from ../src/gui/guiapp_resources.h:16:0,
+                 from ../src/guiapp_event_handlers.c:3:
+../src/guiapp_event_handlers.c: In function 'update_text_id':
+../src/guiapp_event_handlers.c:183:46: warning: conversion to 'USHORT' from 'GX_RESOURCE_ID' may alter its value [-Wconversion]
+     ssp_err_t err = gx_widget_find(p_widget, id, GX_SEARCH_DEPTH_INFINITE, (GX_WIDGET**)&p_prompt);
+                                              ^
+C:\Users\Kirti\e2_studio\workspace\GUI_APP\GUIAppADC\synergy\ssp\inc\framework\el/gx_api.h:3074:99: note: in definition of macro 'gx_widget_find'
+ #define gx_widget_find(a, b, c, d)                               _gxe_widget_find((GX_WIDGET *)a, b, c, (GX_WIDGET **)d)
+                                                                                                   ^
+'Finished building: ../src/guiapp_event_handlers.c'
+' '
+../src/main_thread_entry.c: In function 'ssp_touch_to_guix':
+../src/main_thread_entry.c:218:62: warning: conversion to 'GX_VALUE' from 'int' may alter its value [-Wconversion]
+   gx_event->gx_event_payload.gx_event_pointdata.gx_point_y = (320 - p_touch_payload->y);  // SK-S7G2
+                                                              ^
+'Finished building: ../src/main_thread_entry.c'
+' '
+'Finished building: ../src/gui/guiapp_resources.c'
+' '
+'Building target: GUIAppADC.elf'
+'Invoking: Cross ARM C Linker'
+arm-none-eabi-gcc @"GUIAppADC.elf.in"
+'Finished building target: GUIAppADC.elf'
+' '
+'Invoking: Cross ARM GNU Create Flash Image'
+arm-none-eabi-objcopy -O srec "GUIAppADC.elf"  "GUIAppADC.srec"
+'Invoking: Cross ARM GNU Print Size'
+arm-none-eabi-size --format=berkeley "GUIAppADC.elf"
+   text	   data	    bss	    dec	    hex	filename
+ 397248	   1832	 475984	 875064	  d5a38	GUIAppADC.elf
+'Finished building: GUIAppADC.srec'
+'Finished building: GUIAppADC.siz'
+' '
+' '
+
+04:08:57 Build Finished. 0 errors, 3 warnings. (took 6s.166ms)
+

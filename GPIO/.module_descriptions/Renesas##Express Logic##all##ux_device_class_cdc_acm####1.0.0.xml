@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<synergyModuleDescription>
+	<module config="config.el.ux_device_class_cdc_acm" display="Framework|USB|${module.el.ux_device_class_cdc_acm.name} USBX Device Class CDC ACM on ux_device_class_cdc_acm" id="module.el.ux_device_class_cdc_acm" version="1">
+        <constraint display="Requires one USBX instance named ${module.el.ux_device_class_cdc_acm.lowerlevelname}">
+            "${interface.el.ux.${module.el.ux_device_class_cdc_acm.lowerlevelname}}" === "1"
+        </constraint>
+        <requires interface="interface.el.ux.${module.el.ux_device_class_cdc_acm.lowerlevelname}" />
+        <requires interface="_rtos" />
+        <provides interface="interface.el.ux_device_class_cdc_acm.${module.el.ux_device_class_cdc_acm.name}" />
+        <property default="g_ux_device_class_cdc_acm" display="Name" id="module.el.ux_device_class_cdc_acm.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_cdc_acm.name}")</constraint>
+        </property>
+        <property id="module.el.ux_device_class_cdc_acm.lowerlevelname" display="Lower Level Name" default="g_ux">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.el.ux_device_class_cdc_acm.lowerlevelname}")</constraint>
+        </property>
+	</module>
+</synergyModuleDescription>
